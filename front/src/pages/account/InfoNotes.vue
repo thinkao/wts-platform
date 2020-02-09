@@ -8,11 +8,11 @@
         :data="tableData"
         style="width: 100%">
         <el-table-column
-          prop="date"
+          prop="tag"
           width="180">
         </el-table-column>
         <el-table-column
-          prop="name"
+          prop="context"
           width="180">
         </el-table-column>
         <el-table-column
@@ -22,7 +22,6 @@
           prop="date">
         </el-table-column>
       </el-table>
-
     </div>
   </el-card>
 
@@ -38,7 +37,14 @@ export default {
       ruleForm: {
         username: '',
         declaration: ''
-      }
+      },
+      tableData: [{
+        tag: '笔记名称',
+        context: '笔记内容',
+        address: 'url',
+        date: '2016-05-03'
+      }]
+
     }
   },
   methods: {

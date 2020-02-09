@@ -6,7 +6,7 @@
           <el-avatar src="https://cube.elemecdn.com/0/88/03b0d39583f48206768a7534e55bcpng.png"></el-avatar>
         </div>
         <div style="float: left;margin-left: 15px">
-          I<div style="float: left">
+          <div style="float: left">
           <span>张三</span>
           <span>ID:53665522</span>
           </div>
