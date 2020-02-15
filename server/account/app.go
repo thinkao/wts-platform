@@ -15,7 +15,7 @@ func CreateTable(tables ...interface{}) {
 	}
 }
 func (App) SetUp() {
-	CreateTable(&model.User{}, &model.UserInfo{}, &model.Comments{}, &model.CommentsReply{})
+	CreateTable(&model.User{}, &model.UserInfo{}, &model.Dynamic{}, &model.Comment{})
 }
 
 func (App) Name() string {
