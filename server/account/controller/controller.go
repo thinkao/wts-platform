@@ -17,13 +17,14 @@ type CSRFTokenAPI struct{ request.Controller }
 func (c *LoginAPI) Post() {
 	data := validation.LoginValid{}
 	c.Check(&data, false)
-	usernamePhone := data.UsernamePhone
+	phone := data.Phone
 	password := data.Password
+	print("phone:"+phone+",password:"+password)
 
 	user := model.User{}
-	err := db.GetDB().Where("username = ?", usernamePhone).First(&user).Error
+	err := db.GetDB().Where("phone = ?", phone).First(&user).Error
 	if err != nil {
-		err := db.GetDB().Where("phone = ?", usernamePhone).First(&user).Error
+		err := db.GetDB().Where("phone = ?", phone).First(&user).Error
 		if err != nil {
 			c.Error("账号不存在!")
 			return
@@ -40,12 +41,12 @@ func (c *LoginAPI) Post() {
 func (c *RegistAPI) Post() {
 	data := validation.RegistValid{}
 	c.Check(&data, false)
-	username := data.Username
-	password := data.Password
 	phone := data.Phone
+	password := data.Password
+	email := data.Email
 
-	if db.GetDB().Where("username = ?", username).First(&model.User{}).Error == nil {
-		c.Error("用户名已存在!")
+	if db.GetDB().Where("email = ?", email).First(&model.User{}).Error == nil {
+		c.Error("该邮箱已被注册!")
 		return
 	}
 
@@ -54,7 +55,7 @@ func (c *RegistAPI) Post() {
 		return
 	}
 
-	user := model.User{Username: username, Password: utils.Encrypt(password), Phone: phone}
+	user := model.User{Password: utils.Encrypt(password), Phone: phone}
 	db.GetDB().Create(&user)
 	c.Success(nil)
 }

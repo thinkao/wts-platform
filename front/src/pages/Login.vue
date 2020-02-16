@@ -5,7 +5,7 @@
       <el-form :model="ruleForm" status-icon ref="ruleForm" :rules="rules" class="demo-ruleForm form-input">
         <el-tabs v-model="LoginName" @tab-click="handleClick" style="width: 100%;align-content: center" stretch="true">
           <el-tab-pane label="账号登录" name="first">
-            <img src="/static/img/logo.png" style="width: 90px;height: 90px;margin-top: 30px">
+            <img src="/static/img/logo_green.png" style="width: 90px;height: 90px;margin-top: 30px">
             <el-form-item prop="phone"><el-input style="width: 350px;margin-top: 10px" v-model="ruleForm.phone" auto-complete="off"
                       placeholder="手机号或邮箱"></el-input>
             </el-form-item>
@@ -137,7 +137,6 @@ export default {
       })
     },
     onLogin () {
-      this.$router.push('/main')
       sessionStorage.clear()
       if (this.ruleForm.phone.trim() === '') {
         this.$message({message: '请输入账号', type: 'error'})
@@ -146,6 +145,7 @@ export default {
       } else {
         var loginParams = {phone: this.ruleForm.phone, user_pass: this.ruleForm.password}
         this.$account.login(loginParams).then(resp => {
+          this.$router.push('/main')
           console.log(resp)
         })
       }

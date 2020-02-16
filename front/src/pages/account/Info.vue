@@ -45,7 +45,7 @@
             </el-menu-item>
             <el-menu-item index="5">
               <i class="el-icon-setting"></i>
-              <router-link to="/account/infoLevel" class="router-link-active"><span>等级信息</span></router-link>
+              <router-link to="/account/infoUpdate" class="router-link-active"><span>基本资料</span></router-link>
             </el-menu-item>
             <el-menu-item index="6">
               <i class="el-icon-setting"></i>

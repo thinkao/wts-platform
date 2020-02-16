@@ -2,7 +2,7 @@
  <div>
    <el-menu :default-active="activeIndex" class="el-menu-demo"
             mode="horizontal" @select="handleSelect" background-color="#252737" text-color="#fff">
-     <el-menu-item><img src="../../static/img/logo1_green.png" style="width: 50px;height: 50px;"></el-menu-item>
+     <el-menu-item><img src="../../static/img/logo_green.png" style="width: 50px;height: 50px;"></el-menu-item>
      <el-menu-item style="font-size: 25px;color: #5dd5c8">摘星</el-menu-item>
      <el-menu-item index="1"><router-link to="/main">首页</router-link></el-menu-item>
      <el-menu-item index="2">处理中心</el-menu-item>

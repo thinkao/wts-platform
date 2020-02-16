@@ -21,6 +21,7 @@ func InitConfig() {
 	//listenning config
 	beego.BConfig.Listen.ServerTimeOut = 120
 	beego.BConfig.Listen.HTTPPort = 8080
+	beego.BConfig.Listen.HTTPAddr = "127.0.0.1"
 
 	//web config
 	beego.BConfig.WebConfig.EnableXSRF = true

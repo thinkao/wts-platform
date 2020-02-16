@@ -3,6 +3,7 @@
   <el-card class="box-card">
     <div>
       <span>等级信息</span>
+      <span>这个模块放置一些等级信息说明</span>
 
     </div>
   </el-card>
