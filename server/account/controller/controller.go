@@ -82,5 +82,5 @@ func (c *UserAPI) Delete() {
 }
 
 func (c *CSRFTokenAPI) Get() {
-	c.Success(map[string]string{"csrf-token": c.XSRFToken()})
+	c.Success(map[string]string{"X-Csrftoken": c.XSRFToken()})
 }
