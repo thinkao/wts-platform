@@ -16,13 +16,13 @@ type User struct {
 	CreatedAt time.Time `gorm:"column:create_time"`
 	UpdatedAt time.Time `gorm:"column:update_time"`
 
-	UserInfo   UserInfo        `gorm:"ForeignKey:UserID"`
-	Dynamics   []Dynamic       `gorm:"ForeignKey:UserID"`
-	Comments   []Comment       `gorm:"ForeignKey:UserID"`
-	Problem    []model.Problem `gorm:"ForeignKey:ID"`
-	FightBlues []model.Fight   `gorm:"ForeignKey:UserBlue"`
-	FightReds  []model.Fight   `gorm:"ForeignKey:UserRed"`
-	FollowUsers          []*User   `gorm:"many2many:user_follow_ships;association_jointable_foreignkey:follow_user_id"`
+	UserInfo    UserInfo        `gorm:"ForeignKey:UserID"`
+	Dynamics    []Dynamic       `gorm:"ForeignKey:UserID"`
+	Comments    []Comment       `gorm:"ForeignKey:UserID"`
+	Problem     []model.Problem `gorm:"ForeignKey:ID"`
+	FightBlues  []model.Fight   `gorm:"ForeignKey:UserBlue"`
+	FightReds   []model.Fight   `gorm:"ForeignKey:UserRed"`
+	FollowUsers []*User         `gorm:"many2many:user_follow_ships;association_jointable_foreignkey:follow_user_id"`
 }
 
 /*用户信息表*/
@@ -36,7 +36,7 @@ type UserInfo struct {
 	UpdatedAt   time.Time `gorm:"column:update_time"`
 }
 
-/*评论表*/
+/*动态表*/
 type Dynamic struct {
 	ID        int `gorm:"AUTO_INCREMENT"`
 	UserID    int
@@ -48,14 +48,15 @@ type Dynamic struct {
 	Comment []Comment `gorm:"ForeignKey:CommentsId"`
 }
 
-/*评论回复表*/
+/*评论表*/
 type Comment struct {
 	ID         int `gorm:"AUTO_INCREMENT"`
 	UserId     int
+	DynamicId  int
 	CommentsId int
 	ImgPath    string    `gorm:"type:varchar(200)"`
 	Content    string    `gorm:"type:varchar(500)"`
 	CreatedAt  time.Time `gorm:"column:create_time"`
 
-	SubComments          []*Comment   `gorm:"many2many:comment_comment;association_jointable_foreignkey:sub_comment_id"`
+	SubComments []*Comment `gorm:"many2many:comment_comment;association_jointable_foreignkey:sub_comment_id"`
 }

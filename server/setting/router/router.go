@@ -10,4 +10,6 @@ func InitRouter() {
 	beego.Router("api/RegistAPI", &account.RegistAPI{})
 	beego.Router("api/CSRFTokenAPI", &account.CSRFTokenAPI{})
 	beego.Router("api/UserAPI", &account.UserAPI{})
+	beego.Router("api/DynamicAPI", &account.DynamicAPI{})
+	beego.Router("api/CommentsAPI", &account.CommentsAPI{})
 }

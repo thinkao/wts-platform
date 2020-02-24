@@ -15,15 +15,13 @@
       </el-menu>
     </div>
     <el-container>
-      <el-footer>Footer</el-footer>
     </el-container>
-
   </div>
 </template>
 
 <script>
 export default {
-  name: 'WelcomePage',
+  name: 'Welcome',
   data () {
     return {
       input: '',
@@ -38,16 +36,18 @@ export default {
     loginTo () {
       this.$router.push('/login')
     }
+  },
+  mounted() {
+      var params = null
+      this.$account.csrf(params).then(resp => {
+          console.log(resp)
+      })
   }
 }
 </script>
 
 <style scoped>
   @import url("//unpkg.com/element-ui@2.13.0/lib/theme-chalk/index.css");
-  .el-footer {
-    text-align: center;
-    line-height: 200px;
-  }
   .el-container {
     height: 200px;
     background: #f6f6f8;

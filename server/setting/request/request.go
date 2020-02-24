@@ -18,6 +18,7 @@ type ResponseData struct {
 }
 
 func (c *Controller) Response(err interface{}, data interface{}, code int) {
+	/*u.Ctx.ResponseWriter.Header().Set("Access-Control-Allow-Origin", u.Ctx.Request.Header.Get("Origin"))*/
 	c.Ctx.ResponseWriter.WriteHeader(code)
 	resp := ResponseData{Err: err, Data: data}
 	c.Data["json"] = resp
@@ -88,17 +89,23 @@ func (c *Controller) Check(validRequest interface{}, loginRequired bool, permiss
 		}
 	}
 
+	if validRequest == nil {
+		return
+	}
 	_ = json.Unmarshal(c.Ctx.Input.RequestBody, validRequest)
 
 	validate := validator.New()
 	errs := validate.Struct(validRequest)
+
 	if errs != nil {
+
 		msg := make(map[string]string)
 		for _, err := range errs.(validator.ValidationErrors) {
 			msg[err.Field()] = err.Tag()
 		}
 		c.InvalidDataError(msg)
 	}
+
 }
 
 func (c *Controller) Login(user model.User) {
@@ -110,8 +117,6 @@ func (c *Controller) Logout() {
 }
 
 func (c *Controller) CheckXSRFCookie() bool {
-
-	return true;
 
 	if !c.EnableXSRF {
 		return true

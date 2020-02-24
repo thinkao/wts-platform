@@ -5,11 +5,9 @@
 </template>
 
 <script>
-import Navigation from './pages/Navigation'
 export default {
   name: 'App',
   components: {
-    'Navigation': Navigation
   }
 }
 </script>

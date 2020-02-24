@@ -1,6 +1,7 @@
 package controller
 
 import (
+	"fmt"
 	"server/account/model"
 	"server/account/serializer"
 	"server/account/utils"
@@ -12,19 +13,23 @@ import (
 type LoginAPI struct{ request.Controller }
 type RegistAPI struct{ request.Controller }
 type UserAPI struct{ request.Controller }
+type DynamicAPI struct{ request.Controller }
+type CommentsAPI struct{ request.Controller }
 type CSRFTokenAPI struct{ request.Controller }
 
+/*登录*/
 func (c *LoginAPI) Post() {
 	data := validation.LoginValid{}
 	c.Check(&data, false)
-	phone := data.Phone
+	phoneEmail := data.PhoneEmail
 	password := data.Password
-	print("phone:"+phone+",password:"+password)
+
+	fmt.Printf(phoneEmail,password)
 
 	user := model.User{}
-	err := db.GetDB().Where("phone = ?", phone).First(&user).Error
+	err := db.GetDB().Where("phone = ?", phoneEmail).First(&user).Error
 	if err != nil {
-		err := db.GetDB().Where("phone = ?", phone).First(&user).Error
+		err := db.GetDB().Where("email = ?", phoneEmail).First(&user).Error
 		if err != nil {
 			c.Error("账号不存在!")
 			return
@@ -34,39 +39,51 @@ func (c *LoginAPI) Post() {
 	if user.Password != utils.Encrypt(password) {
 		c.Error("密码错误!")
 	}
-	c.SetSession("user", user)
+	//c.SetSession("user", user)
+	c.Login(user)
 	c.Success(nil)
 }
 
+/*注册*/
 func (c *RegistAPI) Post() {
 	data := validation.RegistValid{}
 	c.Check(&data, false)
 	phone := data.Phone
 	password := data.Password
-	email := data.Email
+	username := data.Username
 
-	if db.GetDB().Where("email = ?", email).First(&model.User{}).Error == nil {
+	/*email := data.Email*/
+	/*if db.GetDB().Where("email = ?", email).First(&model.User{}).Error == nil {
 		c.Error("该邮箱已被注册!")
 		return
-	}
+	}*/
 
 	if db.GetDB().Where("phone = ?", phone).First(&model.User{}).Error == nil {
 		c.Error("该手机号已被注册!")
 		return
 	}
 
-	user := model.User{Password: utils.Encrypt(password), Phone: phone}
+	user := model.User{Username: username, Password: utils.Encrypt(password), Phone: phone}
 	db.GetDB().Create(&user)
 	c.Success(nil)
 }
 
+/*查询*/
 func (c *UserAPI) Get() {
-	//c.Check(nil, true, "all")
+	id, _ := c.GetInt("id")
 	type User struct {
 		serializer.UserSerialize
 	}
 	var users []User
-	db.GetDB().Find(&users)
+	user := model.User{}
+
+	if id != 0 {
+		db.GetDB().Where("id = ?", id).First(&user)
+		db.GetDB().Model(&user).Related(&user.UserInfo)
+		c.Success(user)
+		return
+	}
+	db.GetDB().Preload("UserInfo").Find(&users)
 	c.Success(users)
 }
 
@@ -74,14 +91,132 @@ func (c *UserAPI) Post() {
 	c.Error(nil)
 }
 
+/*修改*/
 func (c *UserAPI) Put() {
+	data := validation.UpdateUser{}
+	c.Check(&data, false)
+	id := data.Id
+	phone := data.Phone
+	username := data.Username
+	email := data.Email
+	password := data.Password
+	declaration := data.Declaration
+	avatar := data.Avatar
+
+	user := model.User{}
+	userInfo := model.UserInfo{}
+
+	if db.GetDB().Where("id = ?", id).First(&model.User{}).Error == nil {
+
+		db.GetDB().Where("id = ?", id).Model(&user).Updates(model.User{Phone: phone, Username: username, Email: email, Password: password})
+		db.GetDB().Where("user_id = ?",id).Model(&userInfo).Updates(model.UserInfo{Declaration: declaration, Avatar: avatar})
+
+	} else {
+		c.Error("系统没有该人员")
+		return
+	}
+
 	c.Success(nil)
 }
 
+/*删除*/
 func (c *UserAPI) Delete() {
+	data := validation.DeleteUser{}
+	c.Check(&data, false, "all")
+	id := data.Id
+	if db.GetDB().Where("id = ?", id).First(&model.User{}).Error == nil {
+		db.GetDB().Delete(model.User{}, "id = ?", id)
+	} else {
+		c.Error("系统没有该人员")
+		return
+	}
 	c.Success(nil)
 }
 
+/*查看动态*/
+func (c *DynamicAPI) Get() {
+
+	id, _ := c.GetInt("id")
+	type Dynamic struct {
+		serializer.DynamicSerialize
+	}
+	var dynamics []Dynamic
+	if id != 0 {
+		db.GetDB().Where("user_id = ?", id).Find(&dynamics)
+		c.Success(&dynamics)
+		return
+	}
+	db.GetDB().Find(&dynamics)
+	c.Success(&dynamics)
+}
+
+/*发表动态*/
+func (c *DynamicAPI) Post() {
+	data := validation.UserDynamic{}
+	c.Check(&data, false)
+	id := data.Id
+	content := data.Content
+	imgPath := data.ImgPath
+
+	if db.GetDB().Where("id = ?", id).First(&model.User{}).Error != nil {
+
+		c.Error("系统没有该人员")
+		return
+	}
+
+	dynamic := model.Dynamic{UserID: id, Content: content, ImgPath: imgPath}
+	db.GetDB().Create(&dynamic)
+	c.Success(nil)
+}
+
+/*查看评论*/
+func (c *CommentsAPI) GET() {
+	id, _ := c.GetInt("id")
+	dynamicId, _ := c.GetInt("dynamic_id")
+	userId, _ := c.GetInt("comments_id")
+
+	var users []serializer.CommentsSerialize
+
+	if id != 0 {
+		user := serializer.CommentsSerialize{}
+		db.GetDB().Where("id = ?", id).First(&user, "User")
+		c.Success(user)
+		return
+	} else if dynamicId != 0 {
+		db.GetDB().Where("dynamic_id = ?", dynamicId).First(&users, "User")
+	} else if userId != 0 {
+		db.GetDB().Where("user_id = ?", userId).First(&users, "User")
+	} else {
+		db.GetDB().Find(&users, "User")
+
+	}
+	c.Success(users)
+}
+
+/*发表评论*/
+func (c *CommentsAPI) POST() {
+	data := validation.UserComments{}
+	c.Check(&data,false)
+
+	userId := data.UserId
+	dynamicId := data.DynamicId
+	commentsId := data.CommentsId
+	content := data.Content
+	imgPath := data.ImgPath
+
+	if db.GetDB().Where("id = ?", userId).First(&model.User{}).Error != nil {
+		c.Error("系统没有该人员")
+		return
+	}
+
+	comment := model.Comment{UserId:userId, DynamicId: dynamicId, CommentsId: commentsId,Content:content,ImgPath:imgPath}
+	db.GetDB().Create(&comment)
+	c.Success(nil)
+
+
+}
+
+/*生成Token*/
 func (c *CSRFTokenAPI) Get() {
 	c.Success(map[string]string{"X-Csrftoken": c.XSRFToken()})
 }

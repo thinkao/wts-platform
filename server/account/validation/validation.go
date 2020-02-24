@@ -1,12 +1,46 @@
 package validation
 
 type RegistValid struct {
-	Email    string
+	Phone    string `validate:"max=11,min=11,required"`
+	Username string `validate:"required"`
 	Password string `validate:"required"`
-	Phone    string `validate:"max=11,min=11"`
 }
 
 type LoginValid struct {
-	Phone    string `validate:"max=11,min=11"`
-	Password string `valid:"required"`
+	PhoneEmail string `validate:"required"`
+	Password   string `valid:"required"`
+}
+
+type DeleteUser struct {
+	Id int `validate:"required"`
+}
+
+type SelectUser struct {
+	Id int
+}
+
+type UpdateUser struct {
+	Id          int    `validate:"required"`
+	Phone       string `validate:"max=11,min=11"`
+	Username    string
+	Password    string
+	UserType    string
+	Declaration string
+	Email       string
+	Avatar      string
+}
+
+type UserDynamic struct {
+	Id      int    `validate:"required"`
+	Content string `validate:"required,max=500"`
+	ImgPath string `validate:"max=200"`
+}
+
+type UserComments struct {
+	Id        int
+	UserId    int	`validate:"required"`
+	DynamicId int	`validate:"required"`
+	CommentsId int
+	Content   string `validate:"max=500"`
+	ImgPath   string `validate:"max=200"`
 }
