@@ -4,6 +4,8 @@ import (
 	"crypto/md5"
 	"crypto/sha256"
 	"encoding/hex"
+	uuid "github.com/satori/go.uuid"
+	"path"
 )
 
 func Encrypt(s string) string {
@@ -17,4 +19,31 @@ func Encrypt(s string) string {
 	m := md5.New()
 	m.Write([]byte(slice_str))
 	return hex.EncodeToString(m.Sum(nil))
+}
+
+func ImgToUUID(img string) string{
+
+	/*// 创建 UUID v4
+	u1 := uuid.Must(uuid.NewV4())
+	println(`生成的UUID v4：`)
+	println(u1.String())*/
+
+	/*// 创建可以进行错误处理的 UUID v4
+	u2, err1 := uuid.NewV4()
+	if err1 != nil {
+		println(`生成一个UUID v4时出现错误：`)
+		panic(err1)
+	}
+	println(`生成的UUID v4：`)
+	println(u2.String())*/
+
+	name := path.Base(img)
+	ext := path.Ext(img)
+
+	u2, err2 := uuid.FromString(name)
+	if err2 != nil {
+		panic(err2)
+	}
+	return u2.String()+ext
+
 }

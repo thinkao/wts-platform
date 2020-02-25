@@ -1,7 +1,7 @@
 <template>
   <div class="body">
       <div class="picture">
-        <img src="../../../static/img/temp1.jpg">
+        <img src="../../../static/img/temp1.jpg" style="margin: auto;width: 100%">
       </div>
       <div class="box" style="margin-top: 30px">
         <div class="box-one">

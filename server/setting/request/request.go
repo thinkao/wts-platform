@@ -116,6 +116,17 @@ func (c *Controller) Logout() {
 	c.DelSession("user")
 }
 
+func (c *Controller) Session(objectName string,fieldName string) string{
+
+	session := c.GetSession(objectName)
+
+	object := reflect.ValueOf(session)
+
+	return object.FieldByName(fieldName).String()
+
+
+}
+
 func (c *Controller) CheckXSRFCookie() bool {
 
 	if !c.EnableXSRF {

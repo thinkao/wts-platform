@@ -30,13 +30,13 @@ type UpdateUser struct {
 	Avatar      string
 }
 
-type UserDynamic struct {
-	Id      int    `validate:"required"`
-	Content string `validate:"required,max=500"`
+type Dynamic struct {
+
+	Content string `validate:"max=500"`
 	ImgPath string `validate:"max=200"`
 }
 
-type UserComments struct {
+type Comments struct {
 	Id        int
 	UserId    int	`validate:"required"`
 	DynamicId int	`validate:"required"`
