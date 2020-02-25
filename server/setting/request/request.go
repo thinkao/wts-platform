@@ -2,6 +2,7 @@ package request
 
 import (
 	"encoding/json"
+	"fmt"
 	"github.com/astaxie/beego"
 	validator "gopkg.in/go-playground/validator.v9"
 	"reflect"
@@ -70,7 +71,6 @@ func (c *Controller) Check(validRequest interface{}, loginRequired bool, permiss
 		if session == nil {
 			c.LoginRequiredError()
 		}
-
 		hasPermission := false
 		for _, permission := range permissions {
 			if permission == "all" {
@@ -79,6 +79,7 @@ func (c *Controller) Check(validRequest interface{}, loginRequired bool, permiss
 			}
 
 			user := reflect.ValueOf(session)
+			fmt.Printf("**************",user)
 			if user.FieldByName("UserType").String() == permission {
 				hasPermission = true
 				break

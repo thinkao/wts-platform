@@ -34,11 +34,11 @@
           </el-card>
         </div>
       </div>
-      <div>
+      <div class="dynamic">
         <el-card>
           <el-tabs v-model="dynamic" type="card">
             <el-tab-pane label="当前动态" name="dynamicAll">
-              <div class="dynamic">
+              <div>
                 <el-table
                   :data="tableData"
                   style="width: 100%">
@@ -110,59 +110,58 @@
 <script>
 export default {
   name: 'Main',
-    data(){
-      return {
-          textarea: '',
-          allNum: '66',
-          ruleForm: {
-              content: '',
-              imgPath: ''
-          },
-          dynamic: 'dynamicAll',
-          tableData: [],
-          picture: [
-              {
-                  img: 'https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&sec=1555932101740&di=9ee42bcea75b9a6b91f15b6da964ac37&imgtype=0&src=http%3A%2F%2Fpic1.win4000.com%2Fwallpaper%2F9%2F5879c03369db1.jpg'
-              },
-              {
-                  img: 'http://img2.3lian.com/2014/f4/191/d/22.jpg'
-              },
-              {
-                  img: 'https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&sec=1556526887&di=bfbad078380fffd1ec63abaf7d7dd163&imgtype=jpg&er=1&src=http%3A%2F%2Fpic1.win4000.com%2Fwallpaper%2Fd%2F573534849e26b.jpg'
-              }
-          ],
-      }
-    },
-    methods:{
-        search () {
-            this.$account.DynamicAll().then(resp => {
-                this.tableData = resp.data.data
-
-            }).catch(function (error){
-                console.log(error)
-            })
+  data () {
+    return {
+      textarea: '',
+      allNum: '66',
+      ruleForm: {
+        content: '',
+        imgPath: ''
+      },
+      dynamic: 'dynamicAll',
+      tableData: [],
+      picture: [
+        {
+          img: 'https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&sec=1555932101740&di=9ee42bcea75b9a6b91f15b6da964ac37&imgtype=0&src=http%3A%2F%2Fpic1.win4000.com%2Fwallpaper%2F9%2F5879c03369db1.jpg'
         },
-        handleRemove (file, fileList) {
-            console.log(file, fileList)
+        {
+          img: 'http://img2.3lian.com/2014/f4/191/d/22.jpg'
         },
-        handlePictureCardPreview (file) {
-            this.dialogImageUrl = file.url
-            this.dialogVisible = true
-        },
-        publishDynamic () {
-            var pushParams = {content: this.ruleForm.content, imgPath: this.ruleForm.imgPath}
-            this.$account.PublishDynamic(pushParams).then(resp => {
-                console.log(resp)
-                if (resp.data.err == null) {
-                    this.$message({message: '发表成功', type: 'success'})
-                    this.$router.push('/main')
-                }
-            })
+        {
+          img: 'https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&sec=1556526887&di=bfbad078380fffd1ec63abaf7d7dd163&imgtype=jpg&er=1&src=http%3A%2F%2Fpic1.win4000.com%2Fwallpaper%2Fd%2F573534849e26b.jpg'
         }
-    },
-    mounted() {
-        this.search()
+      ],
     }
+  },
+  methods: {
+    search () {
+      this.$account.DynamicAll().then(resp => {
+        this.tableData = resp.data.data
+      }).catch(function (error){
+        console.log(error)
+      })
+    },
+    handleRemove (file, fileList) {
+      console.log(file, fileList)
+    },
+    handlePictureCardPreview (file) {
+      this.dialogImageUrl = file.url
+      this.dialogVisible = true
+    },
+    publishDynamic () {
+      var pushParams = {content: this.ruleForm.content, imgPath: this.ruleForm.imgPath}
+      this.$account.PublishDynamic(pushParams).then(resp => {
+        console.log(resp)
+        if (resp.data.err == null) {
+          this.$message({message: '发表成功', type: 'success'})
+          this.$router.push('/main')
+        }
+      })
+    }
+  },
+  mounted () {
+    this.search()
+  }
 }
 </script>
 <style scoped>
@@ -211,7 +210,7 @@ export default {
     justify-content: space-around;
   }
   .content .dynamic{
-
+    margin-top: 30px;
   }
 
   .content .news .news-first,.content .news .news-second,.content .news .news-third{

@@ -51,6 +51,7 @@ let routes = [
       {path: '/practice',
         component: ProblemPractice,
         name: '专项练习',
+        redirect: '/practice/basic',
         children: [
           {path: '/practice/basic', component: ProblemBasis, name: '计算机基础'},
           {path: '/practice/algorithm', component: ProblemAlgorithm, name: '算法'},

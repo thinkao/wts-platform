@@ -16,7 +16,7 @@
        <template slot="title">{{NiName}}</template>
        <router-link to="/account/Info"><el-menu-item index="4-1" style="text-align: center">我的信息</el-menu-item></router-link>
        <router-link to="/"><el-menu-item index="4-2" style="text-align: center">返回首页</el-menu-item></router-link>
-       <router-link to="/Login"><el-menu-item index="4-3" style="text-align: center">退出登录</el-menu-item></router-link>
+       <el-menu-item index="4-3" style="text-align: center" @click="logout">退出登录</el-menu-item>
      </el-submenu>
      <div style="float: right;margin-top: 10px">
        <el-avatar> user </el-avatar>
@@ -40,6 +40,9 @@ export default {
   methods: {
     handleSelect (key, keyPath) {
       console.log(key, keyPath)
+    },
+    logout (){
+
     }
   },
   mounted () {
