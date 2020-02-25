@@ -4,7 +4,7 @@
       <div class="carousel">
         <el-carousel :interval="4000" type="card" height="260px">
           <el-carousel-item v-for="item in picture" :key="item">
-            <img :src="item.img" style="width: 540px;height: 260px">
+            <img :src="item.img" style="width: 580px;height: 260px">
           </el-carousel-item>
         </el-carousel>
       </div>
@@ -34,8 +34,54 @@
           </el-card>
         </div>
       </div>
-      <div class="dynamic">
-        动态
+      <div>
+        <el-card>
+          <el-tabs v-model="dynamic" type="card">
+            <el-tab-pane label="当前动态" name="dynamicAll">
+              <div class="dynamic">
+                <el-table
+                  :data="tableData"
+                  style="width: 100%">
+                  <el-table-column
+                    prop="content"
+                    width="180">
+                  </el-table-column>
+                  <el-table-column
+                    prop="img_path"
+                    width="180">
+                  </el-table-column>
+                  <el-table-column
+                    prop="create_time">
+                  </el-table-column>
+                </el-table>
+              </div>
+            </el-tab-pane>
+            <el-tab-pane label="发表动态" name="dynamicPush" ref="addForm">
+              <el-upload
+                style="margin-top: 20px"
+                action="http://localhost:8080/api/DynamicAPI/"
+                list-type="picture-card"
+                :on-preview="handlePictureCardPreview"
+                :on-remove="handleRemove">
+                <i class="el-icon-plus"></i>
+              </el-upload>
+              <el-dialog>
+                <img width="100%" :src="this.ruleForm.imgPath" alt="" v-model="ruleForm.imgPath">
+              </el-dialog>
+              <div style="margin: 20px 0;"></div>
+              <el-input
+                type="textarea"
+                :autosize="{ minRows: 8, maxRows: 16}"
+                placeholder="请输入内容"
+                v-model="ruleForm.content"
+                maxlength="500"
+                show-word-limit
+              >
+              </el-input>
+              <el-button type="success" @click="publishDynamic">确认发表</el-button>
+            </el-tab-pane>
+          </el-tabs>
+        </el-card>
       </div>
     </div>
     <div class="person-info">
@@ -66,6 +112,13 @@ export default {
   name: 'Main',
     data(){
       return {
+          textarea: '',
+          allNum: '66',
+          ruleForm: {
+              content: '',
+              imgPath: ''
+          },
+          dynamic: 'dynamicAll',
           tableData: [],
           picture: [
               {
@@ -84,11 +137,28 @@ export default {
         search () {
             this.$account.DynamicAll().then(resp => {
                 this.tableData = resp.data.data
-                console.log("resppppp"+resp.data.data)
+
             }).catch(function (error){
                 console.log(error)
             })
         },
+        handleRemove (file, fileList) {
+            console.log(file, fileList)
+        },
+        handlePictureCardPreview (file) {
+            this.dialogImageUrl = file.url
+            this.dialogVisible = true
+        },
+        publishDynamic () {
+            var pushParams = {content: this.ruleForm.content, imgPath: this.ruleForm.imgPath}
+            this.$account.PublishDynamic(pushParams).then(resp => {
+                console.log(resp)
+                if (resp.data.err == null) {
+                    this.$message({message: '发表成功', type: 'success'})
+                    this.$router.push('/main')
+                }
+            })
+        }
     },
     mounted() {
         this.search()
@@ -145,7 +215,6 @@ export default {
   }
 
   .content .news .news-first,.content .news .news-second,.content .news .news-third{
-    /*border: 1px solid black;*/
     flex-grow: 1;
   }
 

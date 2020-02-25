@@ -8,6 +8,7 @@ import (
 	"server/account/validation"
 	db "server/setting/model"
 	"server/setting/request"
+	"strconv"
 )
 
 type LoginAPI struct{ request.Controller }
@@ -17,7 +18,6 @@ type DynamicAPI struct{ request.Controller }
 type CommentsAPI struct{ request.Controller }
 type CSRFTokenAPI struct{ request.Controller }
 
-/*登录*/
 func (c *LoginAPI) Post() {
 	data := validation.LoginValid{}
 	c.Check(&data, false)
@@ -39,24 +39,17 @@ func (c *LoginAPI) Post() {
 	if user.Password != utils.Encrypt(password) {
 		c.Error("密码错误!")
 	}
-	//c.SetSession("user", user)
+
 	c.Login(user)
 	c.Success(nil)
 }
 
-/*注册*/
 func (c *RegistAPI) Post() {
 	data := validation.RegistValid{}
 	c.Check(&data, false)
 	phone := data.Phone
 	password := data.Password
 	username := data.Username
-
-	/*email := data.Email*/
-	/*if db.GetDB().Where("email = ?", email).First(&model.User{}).Error == nil {
-		c.Error("该邮箱已被注册!")
-		return
-	}*/
 
 	if db.GetDB().Where("phone = ?", phone).First(&model.User{}).Error == nil {
 		c.Error("该手机号已被注册!")
@@ -68,7 +61,6 @@ func (c *RegistAPI) Post() {
 	c.Success(nil)
 }
 
-/*查询*/
 func (c *UserAPI) Get() {
 	id, _ := c.GetInt("id")
 	type User struct {
@@ -91,7 +83,6 @@ func (c *UserAPI) Post() {
 	c.Error(nil)
 }
 
-/*修改*/
 func (c *UserAPI) Put() {
 	data := validation.UpdateUser{}
 	c.Check(&data, false)
@@ -119,7 +110,6 @@ func (c *UserAPI) Put() {
 	c.Success(nil)
 }
 
-/*删除*/
 func (c *UserAPI) Delete() {
 	data := validation.DeleteUser{}
 	c.Check(&data, false, "all")
@@ -133,7 +123,7 @@ func (c *UserAPI) Delete() {
 	c.Success(nil)
 }
 
-/*查看动态*/
+
 func (c *DynamicAPI) Get() {
 
 	id, _ := c.GetInt("id")
@@ -143,6 +133,7 @@ func (c *DynamicAPI) Get() {
 	var dynamics []Dynamic
 	if id != 0 {
 		db.GetDB().Where("user_id = ?", id).Find(&dynamics)
+
 		c.Success(&dynamics)
 		return
 	}
@@ -150,26 +141,33 @@ func (c *DynamicAPI) Get() {
 	c.Success(&dynamics)
 }
 
-/*发表动态*/
 func (c *DynamicAPI) Post() {
-	data := validation.UserDynamic{}
-	c.Check(&data, false)
-	id := data.Id
-	content := data.Content
-	imgPath := data.ImgPath
 
-	if db.GetDB().Where("id = ?", id).First(&model.User{}).Error != nil {
+	fmt.Printf("**********************")
+	data := validation.Dynamic{}
+	c.Check(&data, false)
+
+	id := c.Session("user","id")
+	userId, _ := strconv.Atoi(id)
+	fmt.Printf("userId",userId)
+	content := data.Content
+
+	imgPath := data.ImgPath
+	imgPathUUID := utils.ImgToUUID(imgPath)
+	fmt.Printf("imgPath",imgPath)
+
+
+	if db.GetDB().Where("id = ?", userId).First(&model.User{}).Error != nil {
 
 		c.Error("系统没有该人员")
 		return
 	}
 
-	dynamic := model.Dynamic{UserID: id, Content: content, ImgPath: imgPath}
+	dynamic := model.Dynamic{UserID: userId, Content: content, ImgPath: imgPathUUID}
 	db.GetDB().Create(&dynamic)
 	c.Success(nil)
 }
 
-/*查看评论*/
 func (c *CommentsAPI) GET() {
 	id, _ := c.GetInt("id")
 	dynamicId, _ := c.GetInt("dynamic_id")
@@ -193,9 +191,8 @@ func (c *CommentsAPI) GET() {
 	c.Success(users)
 }
 
-/*发表评论*/
 func (c *CommentsAPI) POST() {
-	data := validation.UserComments{}
+	data := validation.Comments{}
 	c.Check(&data,false)
 
 	userId := data.UserId
@@ -216,7 +213,8 @@ func (c *CommentsAPI) POST() {
 
 }
 
-/*生成Token*/
 func (c *CSRFTokenAPI) Get() {
 	c.Success(map[string]string{"X-Csrftoken": c.XSRFToken()})
 }
+
+

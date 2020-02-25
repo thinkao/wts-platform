@@ -30,6 +30,9 @@ import ProblemDatabase from "../pages/problem/ProblemDatabase";
 import ProblemLanguage from "../pages/problem/ProblemLanguage";
 
 
+import Circle from "../pages/circle/Circle";
+
+
 
 import Fight from "../pages/fight/Fight";
 
@@ -55,7 +58,7 @@ let routes = [
           {path: '/practice/language', component: ProblemLanguage, name: '编程语言'},
         ]},
       {path: '/interview', component: ProblemInterview, name: '面试刷题'},
-      {path: '/circle', component: ProblemInterview, name: '圈子'},
+      {path: '/circle', component: Circle, name: '圈子'},
       {path: '/account/info',
         redirect: '/account/main',
         component: Info,
