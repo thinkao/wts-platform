@@ -55,20 +55,22 @@
         <el-button type="success" style="float: right;display: inline;margin-bottom: 30px">确认</el-button>
       </div>
 
-
     </el-card>
   </div>
 </template>
 
 <script>
+
     export default {
-        name: "ProblemBasis",
-        data() {
-            return {
-                star: null,
-            }
+    name: "ProblemBasis",
+    data() {
+        return {
+            star: null,
         }
+    },
+    mounted() {
     }
+}
 </script>
 
 <style scoped>

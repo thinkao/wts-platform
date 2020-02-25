@@ -1,35 +1,46 @@
 <template>
   <div class="body">
+    <div>
       <div class="picture">
         <img src="../../../static/img/temp1.jpg" style="margin: auto;width: 100%">
       </div>
       <div class="box" style="margin-top: 30px">
         <div class="box-one">
-          <router-link to="/practice/basic"><el-image src="../../../static/img/temp2.png"></el-image></router-link>
+          <router-link to="/practice/basic"><el-button>计算机基础</el-button></router-link>
         </div>
         <div class="box-two">
-          <router-link to="/practice/language"><el-image src="../../../static/img/temp2.png"></el-image></router-link>
+          <router-link to="/practice/language"><el-button>编程语言</el-button></router-link>
         </div>
         <div class="box-three">
-          <router-link to="/practice/language"><el-image src="../../../static/img/temp2.png"></el-image></router-link>
+          <router-link to="/practice/language"><el-button>不知道呢</el-button></router-link>
         </div>
         <div class="box-four">
-          <router-link to="/practice/algorithm"><el-image src="../../../static/img/temp2.png"></el-image></router-link>
+          <router-link to="/practice/algorithm"><el-button>算法</el-button></router-link>
         </div>
         <div class="box-five">
-          <router-link to="/practice/database"><el-image src="../../../static/img/temp2.png"></el-image></router-link>
+          <router-link to="/practice/database"><el-button>数据库</el-button></router-link>
         </div>
       </div>
-      <div class="content">
-        <router-view></router-view>
-      </div>
+    </div>
+    <div class="content">
+      <router-view></router-view>
+    </div>
   </div>
 
 </template>
 
 <script>
+
 export default {
-    name: "ProblemPractice"
+  name: "ProblemPractice",
+  data () {
+
+  },
+  methods: {
+
+  },
+  mounted() {
+  }
 }
 </script>
 
