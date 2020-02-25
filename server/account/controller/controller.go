@@ -2,17 +2,18 @@ package controller
 
 import (
 	"fmt"
+	"server/account/constant"
 	"server/account/model"
 	"server/account/serializer"
 	"server/account/utils"
 	"server/account/validation"
 	db "server/setting/model"
 	"server/setting/request"
-	"strconv"
 )
 
 type LoginAPI struct{ request.Controller }
 type RegistAPI struct{ request.Controller }
+type LogoutAPI struct{ request.Controller }
 type UserAPI struct{ request.Controller }
 type DynamicAPI struct{ request.Controller }
 type CommentsAPI struct{ request.Controller }
@@ -24,16 +25,10 @@ func (c *LoginAPI) Post() {
 	phoneEmail := data.PhoneEmail
 	password := data.Password
 
-	fmt.Printf(phoneEmail,password)
-
 	user := model.User{}
-	err := db.GetDB().Where("phone = ?", phoneEmail).First(&user).Error
-	if err != nil {
-		err := db.GetDB().Where("email = ?", phoneEmail).First(&user).Error
-		if err != nil {
-			c.Error("账号不存在!")
-			return
-		}
+	if db.GetDB().Where("phone = ? or email = ?", phoneEmail, phoneEmail).First(&user).Error != nil {
+		c.Error("账号不存在!")
+		return
 	}
 
 	if user.Password != utils.Encrypt(password) {
@@ -41,6 +36,12 @@ func (c *LoginAPI) Post() {
 	}
 
 	c.Login(user)
+	c.Success(nil)
+}
+
+func (c *LogoutAPI) Post() {
+	c.Check(nil, true, "all")
+	c.Logout()
 	c.Success(nil)
 }
 
@@ -62,6 +63,7 @@ func (c *RegistAPI) Post() {
 }
 
 func (c *UserAPI) Get() {
+	c.Check(nil, true, "all")
 	id, _ := c.GetInt("id")
 	type User struct {
 		serializer.UserSerialize
@@ -73,6 +75,10 @@ func (c *UserAPI) Get() {
 		db.GetDB().Where("id = ?", id).First(&user)
 		db.GetDB().Model(&user).Related(&user.UserInfo)
 		c.Success(user)
+		return
+	}
+	if c.RquestUser().UserType != constant.Admin {
+		c.Error("权限不足")
 		return
 	}
 	db.GetDB().Preload("UserInfo").Find(&users)
@@ -147,9 +153,7 @@ func (c *DynamicAPI) Post() {
 	data := validation.Dynamic{}
 	c.Check(&data, false)
 
-	id := c.Session("user","id")
-	userId, _ := strconv.Atoi(id)
-	fmt.Printf("userId",userId)
+	userId := c.RquestUser().ID
 	content := data.Content
 
 	imgPath := data.ImgPath

@@ -24,9 +24,9 @@ func InitConfig() {
 	beego.BConfig.Listen.HTTPAddr = "127.0.0.1"
 
 	//web config
-	beego.BConfig.WebConfig.EnableXSRF = false
+	beego.BConfig.WebConfig.EnableXSRF = true
 	beego.BConfig.WebConfig.XSRFKey = "61oETzKXQAGaYdkL5gEmGeJJFuYh7EQnp2XdTP1o"
-	beego.BConfig.WebConfig.XSRFExpire = 24
+	beego.BConfig.WebConfig.XSRFExpire = 24 * 60 *60
 
 	//session config
 	beego.BConfig.WebConfig.Session.SessionOn = true

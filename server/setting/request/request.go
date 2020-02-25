@@ -6,6 +6,7 @@ import (
 	validator "gopkg.in/go-playground/validator.v9"
 	"reflect"
 	"server/account/model"
+	"strconv"
 )
 
 type Controller struct {
@@ -116,19 +117,22 @@ func (c *Controller) Logout() {
 	c.DelSession("user")
 }
 
-func (c *Controller) Session(objectName string,fieldName string) string{
-
-	session := c.GetSession(objectName)
-
-	object := reflect.ValueOf(session)
-
-	return object.FieldByName(fieldName).String()
-
-
+func (c *Controller) RquestUser() model.User{
+	session := c.GetSession("user")
+	reflectUser := reflect.ValueOf(session)
+	id, _ := strconv.Atoi(reflectUser.FieldByName("Id").String())
+	user := model.User{
+		ID: id,
+		Username: reflectUser.FieldByName("Username").String(),
+		Password: reflectUser.FieldByName("Password").String(),
+		UserType: reflectUser.FieldByName("UserType").String(),
+		Phone: reflectUser.FieldByName("Phone").String(),
+		Email: reflectUser.FieldByName("Email").String(),
+	}
+	return user
 }
 
 func (c *Controller) CheckXSRFCookie() bool {
-
 	if !c.EnableXSRF {
 		return true
 	}
