@@ -1,7 +1,6 @@
 package controller
 
 import (
-	"fmt"
 	"server/account/constant"
 	"server/account/model"
 	"server/account/serializer"
@@ -12,8 +11,8 @@ import (
 )
 
 type LoginAPI struct{ request.Controller }
+type LogoutAPI struct { request.Controller }
 type RegistAPI struct{ request.Controller }
-type LogoutAPI struct{ request.Controller }
 type UserAPI struct{ request.Controller }
 type DynamicAPI struct{ request.Controller }
 type CommentsAPI struct{ request.Controller }
@@ -33,6 +32,7 @@ func (c *LoginAPI) Post() {
 
 	if user.Password != utils.Encrypt(password) {
 		c.Error("密码错误!")
+		return
 	}
 
 	c.Login(user)
@@ -91,7 +91,7 @@ func (c *UserAPI) Post() {
 
 func (c *UserAPI) Put() {
 	data := validation.UpdateUser{}
-	c.Check(&data, false)
+	c.Check(&data, true)
 	id := data.Id
 	phone := data.Phone
 	username := data.Username
@@ -118,7 +118,7 @@ func (c *UserAPI) Put() {
 
 func (c *UserAPI) Delete() {
 	data := validation.DeleteUser{}
-	c.Check(&data, false, "all")
+	c.Check(&data, true, "all")
 	id := data.Id
 	if db.GetDB().Where("id = ?", id).First(&model.User{}).Error == nil {
 		db.GetDB().Delete(model.User{}, "id = ?", id)
@@ -132,6 +132,7 @@ func (c *UserAPI) Delete() {
 
 func (c *DynamicAPI) Get() {
 
+	c.Check(nil, true, "all")
 	id, _ := c.GetInt("id")
 	type Dynamic struct {
 		serializer.DynamicSerialize
@@ -149,17 +150,15 @@ func (c *DynamicAPI) Get() {
 
 func (c *DynamicAPI) Post() {
 
-	fmt.Printf("**********************")
 	data := validation.Dynamic{}
 	c.Check(&data, false)
 
 	userId := c.RquestUser().ID
+
 	content := data.Content
 
 	imgPath := data.ImgPath
-	imgPathUUID := utils.ImgToUUID(imgPath)
-	fmt.Printf("imgPath",imgPath)
-
+	imgPathUUID := utils.GetUUID(imgPath)
 
 	if db.GetDB().Where("id = ?", userId).First(&model.User{}).Error != nil {
 
@@ -173,6 +172,7 @@ func (c *DynamicAPI) Post() {
 }
 
 func (c *CommentsAPI) GET() {
+	c.Check(nil, true, "all")
 	id, _ := c.GetInt("id")
 	dynamicId, _ := c.GetInt("dynamic_id")
 	userId, _ := c.GetInt("comments_id")
@@ -197,7 +197,7 @@ func (c *CommentsAPI) GET() {
 
 func (c *CommentsAPI) POST() {
 	data := validation.Comments{}
-	c.Check(&data,false)
+	c.Check(&data,true)
 
 	userId := data.UserId
 	dynamicId := data.DynamicId
