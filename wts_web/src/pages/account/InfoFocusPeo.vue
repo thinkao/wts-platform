@@ -1,7 +1,7 @@
 <template>
   <div>
     <el-card class="box-card">
-      <el-tabs v-model="focusList" @tab-click="handleClick" style="width: 100%;align-content: center" stretch="true">
+      <el-tabs v-model="focusList" style="width: 100%;align-content: center" stretch=true>
         <el-tab-pane label="我的关注" name="first">
           <div>
             <el-table

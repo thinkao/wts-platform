@@ -1,39 +1,39 @@
 import Vue from 'vue'
 import Router from 'vue-router'
 
-import Login from '../pages/Login.vue'
-import Welcome from '../pages/Welcome'
-import Navigation from '../pages/Navigation'
-import Main from '../pages/Main'
+import Login from './pages/Login.vue'
+import Welcome from './pages/Welcome'
+import Navigation from './pages/Navigation'
+import Main from './pages/Main'
 
 
-import Info from '../pages/account/Info'
-import InfoMain from '../pages/account/InfoMain'
-import InfoUpdate from '../pages/account/InfoUpdate'
-import InfoFocusPeo from '../pages/account/InfoFocusPeo'
-import InfoDynamic from '../pages/account/InfoDynamic'
-import InfoCollection from '../pages/account/InfoCollection'
-import InfoNotes from '../pages/account/InfoNotes'
-import InfoFeedback from '../pages/account/InfoFeedback'
-import InfoSetting from '../pages/account/InfoSetting'
-import InfoFoot from '../pages/account/InfoFoot'
-import InfoLevel from '../pages/account/InfoLevel'
-import InfoRecord from '../pages/account/InfoRecord'
+import Info from './pages/account/Info'
+import InfoMain from './pages/account/InfoMain'
+import InfoUpdate from './pages/account/InfoUpdate'
+import InfoFocusPeo from './pages/account/InfoFocusPeo'
+import InfoDynamic from './pages/account/InfoDynamic'
+import InfoCollection from './pages/account/InfoCollection'
+import InfoNotes from './pages/account/InfoNotes'
+import InfoFeedback from './pages/account/InfoFeedback'
+import InfoSetting from './pages/account/InfoSetting'
+import InfoFoot from './pages/account/InfoFoot'
+import InfoLevel from './pages/account/InfoLevel'
+import InfoRecord from './pages/account/InfoRecord'
 
 
-import Problem from "../pages/problem/Problem";
-import ProblemPractice from "../pages/problem/ProblemPractice";
-import ProblemInterview from "../pages/problem/ProblemInterview";
-import ProblemBasis from "../pages/problem/ProblemBasis";
-import ProblemAlgorithm from "../pages/problem/ProblemAlgorithm";
-import ProblemDatabase from "../pages/problem/ProblemDatabase";
-import ProblemLanguage from "../pages/problem/ProblemLanguage";
+import Problem from "./pages/problem/Problem";
+import ProblemPractice from "./pages/problem/ProblemPractice";
+import ProblemInterview from "./pages/problem/ProblemInterview";
+import ProblemBasis from "./pages/problem/ProblemBasis";
+import ProblemAlgorithm from "./pages/problem/ProblemAlgorithm";
+import ProblemDatabase from "./pages/problem/ProblemDatabase";
+import ProblemLanguage from "./pages/problem/ProblemLanguage";
 
 
-import Circle from "../pages/circle/Circle";
+import Circle from "./pages/circle/Circle";
 
 
-import Fight from "../pages/fight/Fight";
+import Fight from "./pages/fight/Fight";
 
 Vue.use(Router)
 

@@ -1,7 +1,7 @@
 <template>
 <div>
   <el-card class="box-card">
-    <el-tabs v-model="collectionList" @tab-click="handleClick" style="width: 100%;align-content: center" stretch="true">
+    <el-tabs v-model="collectionList" style="width: 100%;align-content: center" stretch=true>
       <el-tab-pane label="试题" name="first">
         <div>
           <i class="el-icon-tickets"></i>

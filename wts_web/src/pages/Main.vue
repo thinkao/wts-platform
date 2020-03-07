@@ -135,8 +135,9 @@ export default {
   },
   methods: {
     search () {
-      this.$account.DynamicAll().then(resp => {
-        this.tableData = resp.data.data
+      this.$account.request("/api/DynamicAPI","","GET").then(resp => {
+        this.tableData = resp.data
+        console.log(resp)
       }).catch(function (error){
         console.log(error)
       })
@@ -150,7 +151,7 @@ export default {
     },
     publishDynamic () {
       var pushParams = {content: this.ruleForm.content, imgPath: this.ruleForm.imgPath}
-      this.$account.PublishDynamic(pushParams).then(resp => {
+      this.$account.request("/api/DynamicAPI","pushParams","POST").then(resp => {
         console.log(resp)
         if (resp.data.err == null) {
           this.$message({message: '发表成功', type: 'success'})

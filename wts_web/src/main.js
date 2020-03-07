@@ -3,14 +3,16 @@
 import Vue from 'vue'
 import App from './App'
 import ElementUI from 'element-ui'
+import VueJsonp from 'vue-jsonp'
 import api from './api/index'
-import router from './router/router'
+import router from './router'
 import './filters/index'
 import axios from 'axios'
 
 Vue.prototype.$api = api
 Vue.prototype.$account = api.account
 Vue.use(ElementUI)
+Vue.use(VueJsonp)
 Vue.config.productionTip = false
 
 axios.defaults.withCredentials = true
