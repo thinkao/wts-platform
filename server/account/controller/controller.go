@@ -1,7 +1,6 @@
 package controller
 
 import (
-	"fmt"
 	"server/account/constant"
 	"server/account/model"
 	"server/account/serializer"
@@ -85,13 +84,9 @@ func (c *UserAPI) Get() {
 	c.Success(users)
 }
 
-func (c *UserAPI) Post() {
-	c.Error(nil)
-}
-
 func (c *UserAPI) Put() {
-	data := validation.UpdateUser{}
-	c.Check(&data, false)
+	data := validation.UpdateUserValid{}
+	c.Check(&data, true, "all")
 	id := data.Id
 	phone := data.Phone
 	username := data.Username
@@ -106,7 +101,7 @@ func (c *UserAPI) Put() {
 	if db.GetDB().Where("id = ?", id).First(&model.User{}).Error == nil {
 
 		db.GetDB().Where("id = ?", id).Model(&user).Updates(model.User{Phone: phone, Username: username, Email: email, Password: password})
-		db.GetDB().Where("user_id = ?",id).Model(&userInfo).Updates(model.UserInfo{Declaration: declaration, Avatar: avatar})
+		db.GetDB().Where("user_id = ?", id).Model(&userInfo).Updates(model.UserInfo{Declaration: declaration, Avatar: avatar})
 
 	} else {
 		c.Error("系统没有该人员")
@@ -117,8 +112,8 @@ func (c *UserAPI) Put() {
 }
 
 func (c *UserAPI) Delete() {
-	data := validation.DeleteUser{}
-	c.Check(&data, false, "all")
+	data := validation.DeleteByIdValid{}
+	c.Check(&data, true, "admin")
 	id := data.Id
 	if db.GetDB().Where("id = ?", id).First(&model.User{}).Error == nil {
 		db.GetDB().Delete(model.User{}, "id = ?", id)
@@ -128,7 +123,6 @@ func (c *UserAPI) Delete() {
 	}
 	c.Success(nil)
 }
-
 
 func (c *DynamicAPI) Get() {
 
@@ -149,17 +143,14 @@ func (c *DynamicAPI) Get() {
 
 func (c *DynamicAPI) Post() {
 
-	fmt.Printf("**********************")
-	data := validation.Dynamic{}
-	c.Check(&data, false)
+	data := validation.DynamicValid{}
+	c.Check(&data, true)
 
 	userId := c.RquestUser().ID
 	content := data.Content
 
 	imgPath := data.ImgPath
 	imgPathUUID := utils.ImgToUUID(imgPath)
-	fmt.Printf("imgPath",imgPath)
-
 
 	if db.GetDB().Where("id = ?", userId).First(&model.User{}).Error != nil {
 
@@ -170,6 +161,23 @@ func (c *DynamicAPI) Post() {
 	dynamic := model.Dynamic{UserID: userId, Content: content, ImgPath: imgPathUUID}
 	db.GetDB().Create(&dynamic)
 	c.Success(nil)
+}
+
+func (c *DynamicAPI) Delete() {
+
+	data := validation.DeleteByIdValid{}
+	c.Check(&data, true, "all")
+
+	id := data.Id
+
+	if db.GetDB().Where("id = ?", id).First(&model.Dynamic{}).Error == nil {
+		db.GetDB().Delete(model.Dynamic{}, "id = ?", id)
+	} else {
+		c.Error("系统没有该条动态")
+		return
+	}
+	c.Success(nil)
+
 }
 
 func (c *CommentsAPI) GET() {
@@ -196,8 +204,8 @@ func (c *CommentsAPI) GET() {
 }
 
 func (c *CommentsAPI) POST() {
-	data := validation.Comments{}
-	c.Check(&data,false)
+	data := validation.CommentsValid{}
+	c.Check(&data, false)
 
 	userId := data.UserId
 	dynamicId := data.DynamicId
@@ -210,15 +218,12 @@ func (c *CommentsAPI) POST() {
 		return
 	}
 
-	comment := model.Comment{UserId:userId, DynamicId: dynamicId, CommentsId: commentsId,Content:content,ImgPath:imgPath}
+	comment := model.Comment{UserId: userId, DynamicId: dynamicId, CommentsId: commentsId, Content: content, ImgPath: imgPath}
 	db.GetDB().Create(&comment)
 	c.Success(nil)
-
 
 }
 
 func (c *CSRFTokenAPI) Get() {
-	c.Success(map[string]string{"X-Csrftoken": c.XSRFToken()})
+	c.Success(map[string]string{"Csrftoken": c.XSRFToken()})
 }
-
-

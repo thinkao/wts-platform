@@ -10,6 +10,7 @@ type Problem struct {
 	Option    string    `gorm:"type:varchar(500)"`
 	Answer    string    `gorm:"type:varchar(500)"`
 	Type      string    `gorm:"type:varchar(200)"`
+	Difficult string    `gorm:"type:varchar(10)"`
 	CreatedAt time.Time `gorm:"column:create_time"`
 	UpdatedAt time.Time `gorm:"column:update_time"`
 

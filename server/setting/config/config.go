@@ -26,7 +26,7 @@ func InitConfig() {
 	//web config
 	beego.BConfig.WebConfig.EnableXSRF = true
 	beego.BConfig.WebConfig.XSRFKey = "61oETzKXQAGaYdkL5gEmGeJJFuYh7EQnp2XdTP1o"
-	beego.BConfig.WebConfig.XSRFExpire = 24 * 60 *60
+	beego.BConfig.WebConfig.XSRFExpire = 24 * 60 * 60
 
 	//session config
 	beego.BConfig.WebConfig.Session.SessionOn = true
@@ -39,4 +39,5 @@ func InitConfig() {
 	//log config
 	beego.BConfig.Log.AccessLogs = true
 	beego.BConfig.Log.FileLineNum = true
+
 }

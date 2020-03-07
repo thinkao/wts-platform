@@ -31,7 +31,6 @@ func init() {
 
 	serverDB = db
 	db.SingularTable(true)
-	/*打印原生SQL*/
 	db.LogMode(true)
 	serverDB.DB().SetConnMaxLifetime(100)
 	serverDB.DB().SetMaxIdleConns(20)

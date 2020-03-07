@@ -11,15 +11,11 @@ type LoginValid struct {
 	Password   string `valid:"required"`
 }
 
-type DeleteUser struct {
+type DeleteByIdValid struct {
 	Id int `validate:"required"`
 }
 
-type SelectUser struct {
-	Id int
-}
-
-type UpdateUser struct {
+type UpdateUserValid struct {
 	Id          int    `validate:"required"`
 	Phone       string `validate:"max=11,min=11"`
 	Username    string
@@ -30,17 +26,16 @@ type UpdateUser struct {
 	Avatar      string
 }
 
-type Dynamic struct {
-
+type DynamicValid struct {
 	Content string `validate:"max=500"`
 	ImgPath string `validate:"max=200"`
 }
 
-type Comments struct {
-	Id        int
-	UserId    int	`validate:"required"`
-	DynamicId int	`validate:"required"`
+type CommentsValid struct {
+	Id         int
+	UserId     int `validate:"required"`
+	DynamicId  int `validate:"required"`
 	CommentsId int
-	Content   string `validate:"max=500"`
-	ImgPath   string `validate:"max=200"`
+	Content    string `validate:"max=500"`
+	ImgPath    string `validate:"max=200"`
 }
