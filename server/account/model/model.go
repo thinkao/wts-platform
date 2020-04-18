@@ -60,3 +60,13 @@ type Comment struct {
 
 	SubComments []*Comment `gorm:"many2many:comment_comment;association_jointable_foreignkey:sub_comment_id"`
 }
+
+/*动态信息获取*/
+type Result struct {
+	Avatar		string
+	Username	string
+	Content 	string
+	ImgPath		string
+
+	CreateAt	time.Time
+}

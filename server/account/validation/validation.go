@@ -28,7 +28,7 @@ type UpdateUserValid struct {
 
 type DynamicValid struct {
 	Content string `validate:"max=500"`
-	ImgPath string `validate:"max=200"`
+	ImgPath string
 }
 
 type CommentsValid struct {

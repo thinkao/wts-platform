@@ -56,29 +56,39 @@
                 </el-table>
               </div>
             </el-tab-pane>
-            <el-tab-pane label="发表动态" name="dynamicPush" ref="addForm">
-              <el-upload
-                style="margin-top: 20px"
-                action="http://localhost:8080/api/DynamicAPI/"
-                list-type="picture-card"
-                :on-preview="handlePictureCardPreview"
-                :on-remove="handleRemove">
-                <i class="el-icon-plus"></i>
-              </el-upload>
-              <el-dialog>
-                <el-image width="100%" :src="this.ruleForm.imgPath" alt="" v-model="ruleForm.imgPath"></el-image>
-              </el-dialog>
-              <div style="margin: 20px 0;"></div>
-              <el-input
-                type="textarea"
-                :autosize="{ minRows: 8, maxRows: 16}"
-                placeholder="请输入内容"
-                v-model="ruleForm.content"
-                maxlength="500"
-                show-word-limit
-              >
-              </el-input>
-              <el-button type="success" @click="publishDynamic">确认发表</el-button>
+            <!--action="/api/DynamicAPI"-->
+            <el-tab-pane label="发表动态" name="dynamicPush" ref="ruleForm" :model="ruleForm">
+                <el-upload
+                        multiple
+                        name="file"
+                        action=""
+                        list-type="picture-card"
+                        :auto-upload=false
+                        :limit=1
+                        :on-change="onchange"
+                        :on-preview="handlePictureCardPreview"
+                        accept="image/jpeg,image/gif,image/png,image/bmp"
+                        :file-list="fileList2"
+                        :on-remove="handleRemove">
+                  <i class="el-icon-plus"></i>
+                </el-upload>
+                <el-dialog :visible.sync="dialogVisible">
+                  <el-image width="100%" :src="dialogImageUrl" alt="" v-model="ruleForm.imgPath"></el-image>
+                </el-dialog>
+                <div style="margin: 20px 0;"></div>
+                <el-input
+                    type="textarea"
+                    :autosize="{ minRows: 8, maxRows: 16}"
+                    placeholder="请输入内容"
+                    v-model="ruleForm.content"
+                    maxlength="500"
+                    show-word-limit
+                >
+                </el-input>
+              <div style="margin-top: 20px">
+                <el-button type="success" @click="publishDynamic">确认发表</el-button>
+                <el-button type="info" @click="unPublishDynamic">取消发表</el-button>
+              </div>
             </el-tab-pane>
           </el-tabs>
         </el-card>
@@ -108,24 +118,31 @@
 </template>
 
 <script>
+import axios from 'axios'
+import global from "../global";
 export default {
   name: 'Main',
   data () {
     return {
+      isPush:true,
+      params2:{},
+      fileList2:[],
+      dialogVisible:false,
+      dialogImageUrl: '',
       textarea: '',
       allNum: '66',
       ruleForm: {
         content: '',
         imgPath: ''
       },
-      dynamic: 'dynamicAll',
+      dynamic: '',
       tableData: [],
       picture: [
         {
           img: 'https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&sec=1555932101740&di=9ee42bcea75b9a6b91f15b6da964ac37&imgtype=0&src=http%3A%2F%2Fpic1.win4000.com%2Fwallpaper%2F9%2F5879c03369db1.jpg'
         },
         {
-          img: 'http://img2.3lian.com/2014/f4/191/d/22.jpg'
+          img: 'http://img2.3lian.com/2014/f4/191/d/22. jpg'
         },
         {
           img: 'https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&sec=1556526887&di=bfbad078380fffd1ec63abaf7d7dd163&imgtype=jpg&er=1&src=http%3A%2F%2Fpic1.win4000.com%2Fwallpaper%2Fd%2F573534849e26b.jpg'
@@ -135,32 +152,60 @@ export default {
   },
   methods: {
     search () {
-      this.$account.request("/api/DynamicAPI","","GET").then(resp => {
-        this.tableData = resp.data
+        this.$account.request("/api/DynamicAPI","","GET").then(resp => {
         console.log(resp)
+        this.tableData = resp.data.data
       }).catch(function (error){
         console.log(error)
       })
     },
+    onchange(file, fileList){
+      this.param2 = new FormData();
+      this.param2.append('file', file.raw, file.name);
+      console.log(fileList)
+    },
     handleRemove (file, fileList) {
       console.log(file, fileList)
+      this.param2 = null
     },
     handlePictureCardPreview (file) {
       this.dialogImageUrl = file.url
       this.dialogVisible = true
     },
+
     publishDynamic () {
-      var pushParams = {content: this.ruleForm.content, imgPath: this.ruleForm.imgPath}
-      this.$account.request("/api/DynamicAPI","pushParams","POST").then(resp => {
-        console.log(resp)
-        if (resp.data.err == null) {
-          this.$message({message: '发表成功', type: 'success'})
-          this.$router.push('/main')
-        }
-      })
+      if(this.param2 == null&&this.ruleForm.content == ""){
+        this.$message({message: '内容不能为空', type: 'error'})
+      }else {
+        let headers = {
+          headers:{'Content-Type':'multipart/form-data', 'X-Csrftoken':global.CsrfToken}
+        };
+
+        axios.post('/api/DynamicAPI',this.param2,headers).then(resp=>{
+          if(resp.data.data!=null){
+            this.ruleForm.imgPath = resp.data.data.ImgPath
+          }
+          if (resp.data.err == null) {
+            var pushParams = {Content: this.ruleForm.content,ImgPath:this.ruleForm.imgPath}
+            this.$account.request('/api/DynamicAPI',pushParams,"POST").then(resp=>{
+              if (resp.data.err != null) {
+                this.isPush=false
+              }else {
+                this.$message({message: '发表成功', type: 'success'})
+                this.dynamic = "dynamicAll"
+              }
+            })
+          }
+        })
+      }
+    },
+    unPublishDynamic (){
+      this.param2 = null
+      this.ruleForm.content = ""
     }
   },
   mounted () {
+    this.dynamic = "dynamicAll"
     this.search()
   }
 }

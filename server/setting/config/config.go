@@ -6,6 +6,7 @@ import (
 
 const (
 	DbAddr string = "root:root@/server?charset=utf8&parseTime=True&loc=Local"
+	IMAGE_FILE_PATH = "../wts_web/static/upload/"
 )
 
 func InitConfig() {

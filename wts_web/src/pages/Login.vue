@@ -1,5 +1,5 @@
 <template>
-  <div class="login-main">
+  <div ref="box" class="login-main">
     <img height="100%" src="../../static/img/login.png" style="position: fixed;top:0;left: 0" width="100%">
     <div class="login-main-middle">
       <el-form :model="ruleForm" class="demo-ruleForm form-input-login" ref="ruleForm" status-icon>
@@ -117,8 +117,8 @@ export default {
             LoginName: 'first',
             RegisterName: 'first',
             ruleForm: {
-                phoneEmail: '',
-                password: ''
+                phoneEmail: '13920843534',
+                password: '201314'
             },
             addForm: {
                 phone: '',
@@ -143,20 +143,18 @@ export default {
                 if (valid) {
                     var registerParams = {phone: this.addForm.phone, password: this.addForm.pass,username: this.addForm.username}
                     this.$account.request("/api/RegistAPI",registerParams,"POST").then(resp => {
-                        console.log(resp)
-                        if (resp.err == null) {
+                        if (resp.data.err == null) {
                             this.$message({message: '注册成功', type: 'success'})
-                            this.$router.push('/login')
+                        }else {
+                          this.$message({message: '该账户已被注册', type: 'success'})
+                          return false
                         }
                     })
-                } else {
-                    console.log('error submit!!')
-                    return false
                 }
             })
         },
         onLogin() {
-            sessionStorage.clear()
+            //sessionStorage.clear()
             if (this.ruleForm.phoneEmail.trim() === '') {
                 this.$message({message: '请输入账号', type: 'error'})
             } else if (this.ruleForm.password.trim() === '') {
@@ -164,8 +162,7 @@ export default {
             } else {
                 var loginParams = {PhoneEmail: this.ruleForm.phoneEmail, Password: this.ruleForm.password}
                 this.$account.request("/api/LoginAPI",loginParams,"POST").then(resp => {
-                    console.log(resp)
-                    if (resp.err == null) {
+                    if (resp.data.err == null) {
                         this.$message({message: '登陆成功', type: 'success'})
                         this.$router.push('/main')
                     }else {
@@ -176,12 +173,12 @@ export default {
         },
         handleClick () {
 
-        }
+        },
+
     },
     mounted() {
         this.$account.request("/api/CSRFTokenAPI","","GET").then(resp => {
-            console.log(resp)
-            global.CsrfToken = resp.data.Csrftoken
+            global.CsrfToken = resp.data.data.Csrftoken
         })
     }
 }

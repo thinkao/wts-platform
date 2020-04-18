@@ -22,7 +22,7 @@ func (c *ProblemAPI) Post() {
 	answer := data.Answer
 	difficult := data.Difficult
 
-	if c.RquestUser().UserType != constant.Admin {
+	if c.RequestUser().UserType != constant.Admin {
 		c.Error("权限不足")
 		return
 	}
@@ -89,5 +89,5 @@ func (c *ProblemAPI) Get() {
 	//SELECT * FROM problem as t1 WHERE t1.id>=(RAND()*(SELECT MAX(id) FROM problem)) and id like '1%' LIMIT 3;
 	db.GetDB().Where("id >= ? and type = ? and difficult = ?", db.GetDB().Table("problem").Select("MAX(id)").SubQuery(), problemType, difficult).Limit(size).Find(&problem)
 
-	c.Success(nil)
+	c.Success(&problem)
 }

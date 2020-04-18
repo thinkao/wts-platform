@@ -1,11 +1,13 @@
 package controller
 
 import (
+	uuid "github.com/satori/go.uuid"
 	"server/account/constant"
 	"server/account/model"
 	"server/account/serializer"
 	"server/account/utils"
 	"server/account/validation"
+	"server/setting/config"
 	db "server/setting/model"
 	"server/setting/request"
 )
@@ -76,7 +78,7 @@ func (c *UserAPI) Get() {
 		c.Success(user)
 		return
 	}
-	if c.RquestUser().UserType != constant.Admin {
+	if c.RequestUser().UserType != constant.Admin {
 		c.Error("权限不足")
 		return
 	}
@@ -126,39 +128,66 @@ func (c *UserAPI) Delete() {
 
 func (c *DynamicAPI) Get() {
 
+	c.Check(nil, true, "all")
 	id, _ := c.GetInt("id")
 	type Dynamic struct {
 		serializer.DynamicSerialize
 	}
-	var dynamics []Dynamic
-	if id != 0 {
-		db.GetDB().Where("user_id = ?", id).Find(&dynamics)
 
-		c.Success(&dynamics)
-		return
+	/*select avatar,username,content,img_path,d.create_time from user as u,user_info as i,dynamic as d where u.id = i.user_id and u.id = d.user_id order by d.create_time desc;*/
+
+	var results []model.Result
+	if id != 0 {
+		db.GetDB().Table("user").Select("user.username,user_info.avatar,dynamic.content,dynamic.img_path,dynamic.create_time").Joins("left join user_info on user.id = user_info.user_id").Joins("right join dynamic on dynamic.user_id = user.id").Where("user.id = ?",id).Order("dynamic.create_time desc").Scan(&results)
+
+	}else {
+		db.GetDB().Table("user").Select("user.username,user_info.avatar,dynamic.content,dynamic.img_path,dynamic.create_time").Joins("left join user_info on user.id = user_info.user_id").Joins("right join dynamic on dynamic.user_id = user.id").Order("dynamic.create_time desc").Scan(&results)
 	}
-	db.GetDB().Find(&dynamics)
-	c.Success(&dynamics)
+
+	for i:=0;i< len(results);i++ {
+		results[i].ImgPath = config.IMAGE_FILE_PATH + results[i].ImgPath + ".png"
+	}
+
+	c.Success(&results)
 }
+
 
 func (c *DynamicAPI) Post() {
 
 	data := validation.DynamicValid{}
-	c.Check(&data, true)
+	c.Check(&data, true,"all")
 
-	userId := c.RquestUser().ID
+	userId := c.RequestUser().ID
+
 	content := data.Content
-
 	imgPath := data.ImgPath
-	imgPathUUID := utils.ImgToUUID(imgPath)
+
+	var img_file_path string
+
+	f, _, _ := c.GetFile("file")
+	if f != nil {
+		u2 := uuid.NewV4()
+		img_file_path = config.IMAGE_FILE_PATH + u2.String() + ".png"
+		c.SaveToFile("file", img_file_path)
+		img := model.Dynamic{
+			ImgPath:   u2.String(),
+		}
+		c.Success(img)
+		return
+	}
+
 
 	if db.GetDB().Where("id = ?", userId).First(&model.User{}).Error != nil {
-
 		c.Error("系统没有该人员")
 		return
 	}
 
-	dynamic := model.Dynamic{UserID: userId, Content: content, ImgPath: imgPathUUID}
+	if content == "" && imgPath == ""{
+		c.Success(nil)
+		return
+	}
+
+	dynamic := model.Dynamic{UserID: userId,Content:content,ImgPath:imgPath}
 	db.GetDB().Create(&dynamic)
 	c.Success(nil)
 }
@@ -200,7 +229,7 @@ func (c *CommentsAPI) GET() {
 		db.GetDB().Find(&users, "User")
 
 	}
-	c.Success(users)
+	c.Success(&users)
 }
 
 func (c *CommentsAPI) POST() {

@@ -6,7 +6,6 @@ import (
 	validator "gopkg.in/go-playground/validator.v9"
 	"reflect"
 	"server/account/model"
-	"strconv"
 )
 
 type Controller struct {
@@ -19,7 +18,6 @@ type ResponseData struct {
 }
 
 func (c *Controller) Response(err interface{}, data interface{}, code int) {
-	/*c.Ctx.ResponseWriter.Header().Set("Access-Control-Allow-Origin", c.Ctx.Request.Header.Get("Origin"))*/
 	c.Ctx.ResponseWriter.WriteHeader(code)
 	resp := ResponseData{Err: err, Data: data}
 	c.Data["json"] = resp
@@ -117,12 +115,11 @@ func (c *Controller) Logout() {
 	c.DelSession("user")
 }
 
-func (c *Controller) RquestUser() model.User {
+func (c *Controller) RequestUser() model.User {
 	session := c.GetSession("user")
 	reflectUser := reflect.ValueOf(session)
-	id, _ := strconv.Atoi(reflectUser.FieldByName("Id").String())
 	user := model.User{
-		ID:       id,
+		ID:       int(reflectUser.FieldByName("ID").Int()),
 		Username: reflectUser.FieldByName("Username").String(),
 		Password: reflectUser.FieldByName("Password").String(),
 		UserType: reflectUser.FieldByName("UserType").String(),
