@@ -32,6 +32,10 @@ import ProblemLanguage from "./pages/problem/ProblemLanguage";
 
 import Circle from "./pages/circle/Circle";
 
+import Manage from "./pages/manage/manage"
+import ManageUser from "./pages/manage/ManageUser"
+import ManageProblem from "./pages/manage/ManageProblem"
+
 
 import Fight from "./pages/fight/Fight";
 
@@ -61,6 +65,15 @@ const router = new Router({
           ]},
         {path: '/interview', component: ProblemInterview, name: '面试刷题'},
         {path: '/circle', component: Circle, name: '圈子'},
+        {path: '/manage',
+          component:Manage,
+          redirect: '/manage/user',
+          name: '管理',
+          children: [
+            {path: '/manage/user', component: ManageUser, name: '用户管理'},
+            {path: '/manage/problem', component: ManageProblem, name: '题库管理'},
+          ]
+        },
         {path: '/account/info',
           redirect: '/account/main',
           component: Info,

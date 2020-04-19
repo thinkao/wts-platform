@@ -8,7 +8,7 @@ import (
 type UserSerialize struct {
 	ID       int    `json:"id"`
 	Username string `json:"username"`
-
+	UserType string `json:"userType"`
 	UserInfo model.UserInfo `gorm:"ForeignKey:UserID"`
 
 	Email string `json:"email"`

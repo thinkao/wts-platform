@@ -14,7 +14,41 @@
         <el-menu-item index="5">注册</el-menu-item>
       </el-menu>
     </div>
+    <img src="../../static/img/hengtiao.png" style="width: 100%">
+    <div>
+      <el-row :gutter="60" style="margin: 50px">
+        <el-col :span="8">
+          <el-card shadow="hover">
+            <img src="../../static/img/duizhan.jpeg" style="width: 100%;;height: 230px">
+          </el-card>
+        </el-col>
+        <el-col :span="8">
+          <el-card shadow="hover">
+            <img src="../../static/img/lianxi.jpeg" style="width: 100%;height: 230px">
+          </el-card>
+        </el-col>
+        <el-col :span="8">
+          <el-card shadow="hover">
+            <img src="../../static/img/shequ.jpeg" style="width: 100%;;height: 230px">
+          </el-card>
+        </el-col>
+      </el-row>
+      <el-row :gutter="60" style="margin: 50px">
+        <el-col :span="8">
+          <span>Passion versus mode, let you immersed in the joy of the confrontation experience,Passion versus mode, let you immersed in the joy of the confrontation experience</span>
+        </el-col>
+        <el-col :span="8">
+          <span>Special practice mode, mother in also do not have to worry about my study,Special practice mode, mother in also do not have to worry about my study</span>
+        </el-col>
+        <el-col :span="8">
+          <span>Community sharing mode, where you can communicate with people in the community indefinitely,Community sharing mode, where you can communicate with people in the community indefinitely</span>
+        </el-col>
+      </el-row>
+    </div>
     <el-container>
+      <span style="margin: auto">
+        Reach the star platform original @ WS
+      </span>
     </el-container>
   </div>
 </template>

@@ -12,7 +12,7 @@
        <el-menu-item index="3-2"><router-link to="/interview" style="color: white;text-decoration-line: none">面试必备</router-link></el-menu-item>
      </el-submenu>
      <el-menu-item index="3"><router-link to="/circle" style="text-decoration-line: none">圈子</router-link></el-menu-item>
-     <el-menu-item index="4" v-if="this.UserType === 'admin'"><router-link to="/manage" style="text-decoration-line: none">管理</router-link></el-menu-item>
+     <el-menu-item index="4"><router-link to="/manage" style="text-decoration-line: none">管理</router-link></el-menu-item>
      <el-submenu index="5" style="float: right">
        <template slot="title">{{UserName}}</template>
        <router-link to="/account/Info"><el-menu-item index="5-1" style="text-align: center">我的信息</el-menu-item></router-link>

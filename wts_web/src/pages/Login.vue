@@ -117,7 +117,7 @@ export default {
             LoginName: 'first',
             RegisterName: 'first',
             ruleForm: {
-                phoneEmail: '13920843534',
+                phoneEmail: '12345678912',
                 password: '201314'
             },
             addForm: {

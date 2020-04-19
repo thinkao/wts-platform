@@ -1,6 +1,7 @@
 package controller
 
 import (
+	"fmt"
 	uuid "github.com/satori/go.uuid"
 	"server/account/constant"
 	"server/account/model"
@@ -115,6 +116,7 @@ func (c *UserAPI) Put() {
 
 func (c *UserAPI) Delete() {
 	data := validation.DeleteByIdValid{}
+	fmt.Println("----",data.Id)
 	c.Check(&data, true, "admin")
 	id := data.Id
 	if db.GetDB().Where("id = ?", id).First(&model.User{}).Error == nil {
