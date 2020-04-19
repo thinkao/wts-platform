@@ -2,29 +2,32 @@
     <div>
         <div v-if="showList===1">
             <div class="conditions">
-                <el-form :inline="true" :model="ruleForm" class="demo-form-inline">
+                <el-form :inline="true" v-model="queryForm" class="demo-form-inline">
                     <el-form-item label="用户ID">
-                        <el-input v-model="ruleForm.id"></el-input>
+                        <el-input v-model="queryForm.param.ID"></el-input>
                     </el-form-item>
                     <el-form-item label="用户名" class="condition">
-                        <el-input v-model="ruleForm.username"></el-input>
+                        <el-input v-model="queryForm.param.Username"></el-input>
                     </el-form-item>
                     <el-form-item label="手机号" class="condition">
-                        <el-input v-model="ruleForm.phone"></el-input>
+                        <el-input v-model="queryForm.param.Phone"></el-input>
                     </el-form-item>
                     <el-form-item label="邮箱" class="condition">
-                        <el-input v-model="ruleForm.email"></el-input>
+                        <el-input v-model="queryForm.param.Email"></el-input>
                     </el-form-item>
                     <el-form-item label="角色" class="condition">
-                        <el-select v-model="ruleForm.userType">
+                        <el-select v-model="queryForm.param.UserType">
                             <el-option label="管理员" value="admin"></el-option>
                             <el-option label="普通用户" value="normal"></el-option>
                         </el-select>
                     </el-form-item>
                     <el-form-item style="float: right">
-                        <el-button type="primary" @click="select" style="width: 100px">查询</el-button>
+                        <el-button type="primary" @click="search" style="width: 100px">查询</el-button>
                     </el-form-item>
                 </el-form>
+            </div>
+            <div>
+                <el-button class="addUser" type="primary" circle title="新增" @click="changeMap(2)">+</el-button>
             </div>
             <div class="conditions">
                 <el-table
@@ -69,48 +72,51 @@
             <div class="layout-div form-data">
                 <div slot="header" class="layout-div header-bar">
                     <div style="margin-top: 60px;text-align: right">
-                        <el-button v-show="isUpdate" class="zdy-button bao_cun" @click="saveUpdate">保存</el-button>
+                        <el-button class="zdy-button" @click="saveUpdate">保存</el-button>
                         <el-button @click="changeMap(1)" class="zdy-button">取消</el-button>
                     </div>
                 </div>
                 <el-form :model="ruleForm" ref="ruleForm" label-width="100px" style="margin-top: 15px">
                     <el-form-item label="用户ID" prop="id">
-                        <el-input v-model="ruleForm.id"></el-input>
+                        <el-input :disabled="true" v-model="ruleForm.ID"></el-input>
                     </el-form-item>
                     <el-form-item label="用户名" prop="username">
-                        <el-input v-model="ruleForm.username"></el-input>
+                        <el-input v-model="ruleForm.Username"></el-input>
+                    </el-form-item>
+                    <el-form-item label="密码" prop="password">
+                        <el-input v-model="ruleForm.Password"></el-input>
                     </el-form-item>
                     <el-form-item label="手机号" prop="phone">
-                        <el-input v-model="ruleForm.phone" @blur="phoneValid($event)"></el-input>
+                        <el-input v-model="ruleForm.Phone" @blur="phoneValid($event)"></el-input>
                     </el-form-item>
                     <el-form-item label="邮箱" prop="email">
-                        <el-input v-model="ruleForm.email"></el-input>
+                        <el-input v-model="ruleForm.Email"></el-input>
                     </el-form-item>
                     <el-form-item label="角色" prop="userType">
-                        <el-select v-model="ruleForm.userType">
-                            <el-option label="普通用户" value="1"></el-option>
-                            <el-option label="管理员" value="2"></el-option>
+                        <el-select v-model="ruleForm.UserType">
+                            <el-option label="普通用户" value="normal"></el-option>
+                            <el-option label="管理员" value="admin"></el-option>
                         </el-select>
                     </el-form-item>
                     <el-form-item label="宣言" prop="declaration">
-                        <el-input v-model="ruleForm.declaration"></el-input>
+                        <el-input v-model="ruleForm.Declaration"></el-input>
                     </el-form-item>
                     <el-form-item label="等级" prop="level">
-                        <el-input v-model="ruleForm.level"></el-input>
+                        <el-input v-model="ruleForm.Level"></el-input>
                     </el-form-item>
                     <el-form-item label="积分" prop="integral">
-                        <el-input v-model="ruleForm.integral"></el-input>
+                        <el-input v-model="ruleForm.Integral"></el-input>
                     </el-form-item>
-                    <el-form-item label="上传头像" prop="avatar">
+                    <!--<el-form-item label="上传头像" prop="avatar">
                         <el-upload
                                 class="upload-demo"
-                                v-model="ruleForm.avatar"
+                                v-model="ruleForm.Avatar"
                                 action="https://jsonplaceholder.typicode.com/posts/"
                                 multiple
                                 :file-list="fileList">
                             <el-button size="small" type="primary">点击上传</el-button>
                         </el-upload>
-                    </el-form-item>
+                    </el-form-item>-->
                 </el-form>
             </div>
         </div>
@@ -122,27 +128,50 @@ export default {
     name: "ManageUser",
     data() {
         return {
-            isUpdate: true,
             showList: 1,
             tableData: [],
             fileList: [],
             sizeTotal: 0,
             ruleForm: {
-                id: '',
-                username: '',
-                phone: '',
-                email: '',
-                userType: '',
-                declaration: '',
-                level: '',
-                integral: '',
-                avatar: ''
+                ID: '',
+                Username: '',
+                Password: '',
+                Phone: '',
+                Email: '',
+                UserType: '',
+                Declaration: '',
+                Level: '',
+                Integral: '',
+                Avatar: ''
+            },
+            queryForm: {
+                param:{
+                    ID:'',
+                    Username:'',
+                    Phone:'',
+                    Email:'',
+                    UserType:''
+                },
+                currentPage: 1,
+                pageSize: 10
             }
         }
     },
     methods: {
         search () {
-            this.$account.request("/api/UserAPI","","GET").then(resp => {
+            var selectConditionParams = {
+                ID: this.queryForm.param.ID,
+                Username: this.queryForm.param.Username,
+                Phone: this.queryForm.param.Phone,
+                Email: this.queryForm.param.Email,
+                UserType: this.queryForm.param.UserType,
+                //Current: this.queryForm.currentPage,
+                //Limit: this.queryForm.pageSize,
+                //Offset: 0,
+            }
+            console.log(JSON.stringify(selectConditionParams))
+            this.$account.request("/api/UserAPI",selectConditionParams,"GET").then(resp => {
+                console.log(resp.data.data)
                 this.tableData = resp.data.data
                 this.sizeTotal = resp.data.data.total
             }).catch(function (error){
@@ -150,16 +179,31 @@ export default {
             })
         },
         saveUpdate(){
-            if(!this.ruleForm.id){
-                this.$account.request("/api/UserAPI","","POST").then(resp => {
+            var saveUpdateParams = {
+                ID: this.ruleForm.ID,
+                UserName: this.ruleForm.Username,
+                Phone:this.ruleForm.Phone,
+                Password: this.ruleForm.Password,
+                Email:this.ruleForm.Email,
+                UserType: this.ruleForm.UserType,
+                Declaration:this.ruleForm.Declaration,
+                Level: this.ruleForm.Level,
+                Integral: parseInt(this.ruleForm.Integral),
+                Avatar: this.ruleForm.Avatar
+            }
+            if(!this.ruleForm.ID){
+                this.$account.request("/api/UserAPI",saveUpdateParams,"POST").then(resp => {
                     if(resp.data.err == null){
                         this.$message({message: '新增成功', type: 'success'})
                         this.changeMap(1)
+                    }else {
+                        this.$message({message: '新增失败', type: 'fail'})
                     }
-                    this.$message({message: '新增失败', type: 'fail'})
                 })
             }else{
-                this.$account.request("/api/UserAPI","","INPUT").then(resp => {
+                console.log(saveUpdateParams)
+                this.$account.request("/api/UserAPI",saveUpdateParams,"PUT").then(resp => {
+                    console.log(resp.data.err)
                     if(resp.data.err == null){
                         this.$message({type: 'success', message: '修改成功!', customClass: 'zZindex'});
                         this.changeMap(1)
@@ -174,14 +218,17 @@ export default {
                 this.resetForm()
             }
             this.showList = type
-            this.isUpdate = true
             if(type === 1){
                 this.ruleForm = {
-                    book_name: '',
-                    book_editor: '',
-                    book_price: '',
-                    kind_name: '',
-                    pub_name: '',
+                    id: '',
+                    username: '',
+                    phone: '',
+                    email: '',
+                    userType: '',
+                    declaration: '',
+                    level: '',
+                    integral: '',
+                    avatar: ''
                 }
             }
         },
@@ -197,9 +244,8 @@ export default {
                 cancelButtonText: '取消',
                 type: 'warning'
             }).then(() => {
-                var DeleteParams = {Id: row.id}
+                var DeleteParams = {id: row.id}
                 this.$account.request("/api/UserAPI",DeleteParams,"DELETE").then(resp => {
-                    console.log("----"+resp.data.err)
                     if(resp.data.err == null){
                         this.search()
                         this.$message({type: 'success', message: '删除成功!'})
@@ -211,9 +257,12 @@ export default {
         },
         updateRow(row) {
             this.showList = 2
-            var SelectByIdParams = {Id: row.id}
+            var SelectByIdParams = {ID: row.id}
             this.$account.request("/api/UserAPI",SelectByIdParams,"GET").then(resp => {
-                this.tableData = resp.data.data
+                this.resetForm()
+                if(resp.data.err == null){
+                    this.ruleForm = resp.data.data
+                }
             }).catch(function (error){
                 console.log(error)
             })
@@ -251,4 +300,11 @@ export default {
         width: 60%;
     }
 
+    .addUser{
+        margin-right: 70px;
+        width: 50px;
+        height: 50px;
+        float: right;
+        font-size: 25px;
+    }
 </style>

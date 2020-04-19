@@ -2,15 +2,7 @@ import axios from 'axios'
 import global from "../global";
 
 export const request = (api,data,method) => {
-    return  axios({
-            method: method,
-            url: api,
-            data: data,
-            headers:{
-                'X-Csrftoken':global.CsrfToken
-            }
-    });
-    /*if(method=="GET"){
+    if(method=="GET"){
         let dataStr = ''
         Object.keys(data).forEach(key => {
             if (!['', undefined, null].includes(data[key])) {
@@ -27,7 +19,15 @@ export const request = (api,data,method) => {
             dataStr = dataStr.substr(0, dataStr.lastIndexOf('&'))
             api = `${api}?${dataStr}` // get方法下降url转化为url?key=data形式
         }
-    }*/
+    }
+    return  axios({
+        method: method,
+        url: api,
+        data: data,
+        headers:{
+            'X-Csrftoken':global.CsrfToken
+        }
+    });
 
 }
 

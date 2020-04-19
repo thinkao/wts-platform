@@ -146,7 +146,7 @@ export default {
                         if (resp.data.err == null) {
                             this.$message({message: '注册成功', type: 'success'})
                         }else {
-                          this.$message({message: '该账户已被注册', type: 'success'})
+                          this.$message({message: '该用户名已被注册', type: 'fail'})
                           return false
                         }
                     })

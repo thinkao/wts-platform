@@ -1,7 +1,6 @@
 package controller
 
 import (
-	"fmt"
 	uuid "github.com/satori/go.uuid"
 	"server/account/constant"
 	"server/account/model"
@@ -59,22 +58,47 @@ func (c *RegistAPI) Post() {
 		return
 	}
 
+	if db.GetDB().Where("username = ?", username).First(&model.User{}).Error == nil {
+		c.Error("该用户名已被注册!")
+		return
+	}
+
 	user := model.User{Username: username, Password: utils.Encrypt(password), Phone: phone}
 	db.GetDB().Create(&user)
+
+	var user1 model.User
+	if (db.GetDB().Table("user").Select("id").Where("phone = ?", phone).Scan(&user1)).Error == nil{
+		id := user1.ID
+		userInfo := model.UserInfo{UserID: id}
+		db.GetDB().Create(&userInfo)
+	}
+
 	c.Success(nil)
 }
 
 func (c *UserAPI) Get() {
 	c.Check(nil, true, "all")
-	id, _ := c.GetInt("id")
+	id, _ := c.GetInt("ID")
+	/*username := c.GetString("Username")
+	phone := c.GetString("Phone")
+	email := c.GetString("Email")
+	userType := c.GetString("UserType")*/
+
 	type User struct {
 		serializer.UserSerialize
 	}
 	var users []User
 	user := model.User{}
 
+	/*newId := '%'+id+'%'
+	newUsername := "%"+username+"%"
+	newPhone := "%"+phone+"%"
+	newEmail := "%"+email+"%"
+	newUserType := "%"+userType+"%"*/
+
 	if id != 0 {
 		db.GetDB().Where("id = ?", id).First(&user)
+		/*db.GetDB().Where("id = ?", id).First(&user)*/
 		db.GetDB().Model(&user).Related(&user.UserInfo)
 		c.Success(user)
 		return
@@ -87,24 +111,73 @@ func (c *UserAPI) Get() {
 	c.Success(users)
 }
 
+func (c *UserAPI) Post() {
+	data := validation.AddUserValid{}
+	c.Check(&data,true,"admin")
+	phone := data.Phone
+	username := data.Username
+	password := data.Password
+	userType :=data.UserType
+	email := data.Email
+	declaration := data.Declaration
+	integral := data.Integral
+	level := data.Level
+	avatar := data.Avatar
+
+	if db.GetDB().Where("phone = ?", phone).First(&model.User{}).Error == nil {
+		c.Error("该手机号已被注册!")
+		return
+	}
+
+	user := model.User{Phone: phone, Username:username,Password: utils.Encrypt(password), Email: email,UserType:userType}
+	db.GetDB().Create(&user)
+
+
+	var user1 model.User
+	if (db.GetDB().Table("user").Select("id").Where("phone = ?", phone).Scan(&user1)).Error == nil{
+		id := user1.ID
+		userInfo := model.UserInfo{UserID: id,Declaration: declaration, Integral:integral, Level:level, Avatar: avatar}
+		db.GetDB().Create(&userInfo)
+	}
+
+	c.Success(nil)
+
+}
+
 func (c *UserAPI) Put() {
 	data := validation.UpdateUserValid{}
 	c.Check(&data, true, "all")
 	id := data.Id
 	phone := data.Phone
 	username := data.Username
+
 	email := data.Email
 	password := data.Password
 	declaration := data.Declaration
 	avatar := data.Avatar
 
+
+	userData := map[string]interface{}{"Phone":phone,"Username":username,"Password":password,"Email":email}
+
+	userInfoData := map[string]interface{}{"Declaration":declaration,"Avatar":avatar}
+
+	UserType := c.RequestUser().UserType
+	if UserType == constant.Admin{
+
+		userData["UserType"] = data.UserType
+		userInfoData["Integral"] = data.Integral
+		userInfoData["Level"] = data.Level
+
+	}
+
 	user := model.User{}
 	userInfo := model.UserInfo{}
 
+
 	if db.GetDB().Where("id = ?", id).First(&model.User{}).Error == nil {
 
-		db.GetDB().Where("id = ?", id).Model(&user).Updates(model.User{Phone: phone, Username: username, Email: email, Password: password})
-		db.GetDB().Where("user_id = ?", id).Model(&userInfo).Updates(model.UserInfo{Declaration: declaration, Avatar: avatar})
+		db.GetDB().Where("id = ?", id).Model(&user).Updates(userData)
+		db.GetDB().Where("user_id = ?", id).Model(&userInfo).Updates(userInfoData)
 
 	} else {
 		c.Error("系统没有该人员")
@@ -116,7 +189,6 @@ func (c *UserAPI) Put() {
 
 func (c *UserAPI) Delete() {
 	data := validation.DeleteByIdValid{}
-	fmt.Println("----",data.Id)
 	c.Check(&data, true, "admin")
 	id := data.Id
 	if db.GetDB().Where("id = ?", id).First(&model.User{}).Error == nil {

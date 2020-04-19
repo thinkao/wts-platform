@@ -25,6 +25,14 @@ type User struct {
 	FollowUsers []*User         `gorm:"many2many:user_follow_ships;association_jointable_foreignkey:follow_user_id"`
 }
 
+func (User) TableName() string {
+	return "user"
+}
+
+func (UserInfo) TableName() string {
+	return "user_info"
+}
+
 /*用户信息表*/
 type UserInfo struct {
 	UserID      int

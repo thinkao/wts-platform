@@ -15,6 +15,18 @@ type DeleteByIdValid struct {
 	Id int `validate:"required"`
 }
 
+type AddUserValid struct {
+	Phone       string `validate:"required,max=11,min=11"`
+	Username    string `validate:"required"`
+	Password    string `validate:"required"`
+	UserType    string
+	Declaration string
+	Integral	int
+	Level		string
+	Email       string
+	Avatar      string
+}
+
 type UpdateUserValid struct {
 	Id          int    `validate:"required"`
 	Phone       string `validate:"max=11,min=11"`
@@ -23,6 +35,8 @@ type UpdateUserValid struct {
 	UserType    string
 	Declaration string
 	Email       string
+	Integral	int
+	Level		string
 	Avatar      string
 }
 
