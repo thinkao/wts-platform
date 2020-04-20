@@ -1,6 +1,7 @@
 package controller
 
 import (
+	"fmt"
 	uuid "github.com/satori/go.uuid"
 	"server/account/constant"
 	"server/account/model"
@@ -10,6 +11,7 @@ import (
 	"server/setting/config"
 	db "server/setting/model"
 	"server/setting/request"
+	"strconv"
 )
 
 type LoginAPI struct{ request.Controller }
@@ -79,10 +81,12 @@ func (c *RegistAPI) Post() {
 func (c *UserAPI) Get() {
 	c.Check(nil, true, "all")
 	id, _ := c.GetInt("ID")
-	/*username := c.GetString("Username")
+	username := c.GetString("Username")
 	phone := c.GetString("Phone")
 	email := c.GetString("Email")
-	userType := c.GetString("UserType")*/
+	userType := c.GetString("UserType")
+
+	fmt.Println("----2----",id,username,phone,email,userType)
 
 	type User struct {
 		serializer.UserSerialize
@@ -90,24 +94,36 @@ func (c *UserAPI) Get() {
 	var users []User
 	user := model.User{}
 
-	/*newId := '%'+id+'%'
+
+	if id != 0 && (c.RequestUser().UserType == constant.Normal) {
+		if id == c.RequestUser().ID {
+			db.GetDB().Where("id = ?", id).First(&user)
+			db.GetDB().Model(&user).Related(&user.UserInfo)
+			c.Success(user)
+			return
+		}
+		c.Error("权限不足")
+		return
+	}
+
+	var newIdStr = ""
+	if id == 0 {
+		newIdStr = ""
+	}else {
+		newIdStr = strconv.Itoa(id)
+	}
+	fmt.Println("----d-----",newIdStr)
+	newId := "%"+newIdStr+"%"
 	newUsername := "%"+username+"%"
 	newPhone := "%"+phone+"%"
 	newEmail := "%"+email+"%"
-	newUserType := "%"+userType+"%"*/
+	newUserType := "%"+userType+"%"
 
-	if id != 0 {
-		db.GetDB().Where("id = ?", id).First(&user)
-		/*db.GetDB().Where("id = ?", id).First(&user)*/
-		db.GetDB().Model(&user).Related(&user.UserInfo)
-		c.Success(user)
-		return
-	}
 	if c.RequestUser().UserType != constant.Admin {
 		c.Error("权限不足")
 		return
 	}
-	db.GetDB().Preload("UserInfo").Find(&users)
+	db.GetDB().Joins("left join user_info on user.id = user_info.user_id").Where("user.id like ? and user.username like ? and user.phone like ? and user.email like ? and user.user_type like ?",newId,newUsername,newPhone,newEmail,newUserType).Find(&users)
 	c.Success(users)
 }
 
