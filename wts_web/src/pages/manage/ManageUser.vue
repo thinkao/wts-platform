@@ -66,6 +66,18 @@
                     </el-table-column>
                 </el-table>
             </div>
+            <div class="block pageSelect">
+                <el-pagination
+                        background
+                        @size-change="handleSizeChange"
+                        @current-change="handleCurrentChange"
+                        :current-page="1"
+                        :page-sizes="[8, 15, 30]"
+                        :page-size="2"
+                        layout="total, sizes, prev, pager, next, jumper"
+                        :total=sizeTotal>
+                </el-pagination>
+            </div>
         </div>
         <div class="layout-div" v-if="showList===2">
 
@@ -120,6 +132,37 @@
                 </el-form>
             </div>
         </div>
+        <el-dialog title="详细信息" :visible.sync="dialogVisible" width="40%">
+            <el-form :data="this.openlaunch" label-width="90px" class="demo-ruleForm">
+                <el-form-item label="用户ID:" prop="id">
+                    <span>{{ruleForm.ID}}</span>
+                </el-form-item>
+                <el-form-item label="用户名:" prop="username">
+                    <span>{{ruleForm.Username}}</span>
+                </el-form-item>
+                <el-form-item label="密码:" prop="password">
+                    <span>{{ruleForm.Password}}</span>
+                </el-form-item>
+                <el-form-item label="手机号:" prop="phone">
+                    <span>{{ruleForm.Phone}}</span>
+                </el-form-item>
+                <el-form-item label="邮箱:" prop="email">
+                    <span>{{ruleForm.Email}}</span>
+                </el-form-item>
+                <el-form-item label="角色:" prop="userType">
+                    <span>{{ruleForm.UserType}}</span>
+                </el-form-item>
+                <el-form-item label="宣言:" prop="declaration">
+                    <span>{{ruleForm.Declaration}}</span>
+                </el-form-item>
+                <el-form-item label="等级:" prop="level">
+                    <span>{{ruleForm.Level}}</span>
+                </el-form-item>
+                <el-form-item label="积分:" prop="integral">
+                    <span>{{ruleForm.Integral}}</span>
+                </el-form-item>
+            </el-form>
+        </el-dialog>
     </div>
 </template>
 
@@ -130,7 +173,9 @@ export default {
         return {
             showList: 1,
             tableData: [],
+            openlaunch: [],
             fileList: [],
+            dialogVisible: false,
             sizeTotal: 0,
             ruleForm: {
                 ID: '',
@@ -153,7 +198,7 @@ export default {
                     UserType:''
                 },
                 currentPage: 1,
-                pageSize: 10
+                pageSize: 8
             }
         }
     },
@@ -165,13 +210,12 @@ export default {
                 Phone: this.queryForm.param.Phone,
                 Email: this.queryForm.param.Email,
                 UserType: this.queryForm.param.UserType,
-                //Current: this.queryForm.currentPage,
-                //Limit: this.queryForm.pageSize,
+                CurrentPage: this.queryForm.currentPage,
+                PageSize: this.queryForm.pageSize,
                 //Offset: 0,
             }
             console.log(JSON.stringify(selectConditionParams))
             this.$account.request("/api/UserAPI",selectConditionParams,"GET").then(resp => {
-                console.log(resp.data.data)
                 this.tableData = resp.data.data
                 this.sizeTotal = resp.data.data.total
             }).catch(function (error){
@@ -195,6 +239,7 @@ export default {
                 this.$account.request("/api/UserAPI",saveUpdateParams,"POST").then(resp => {
                     if(resp.data.err == null){
                         this.$message({message: '新增成功', type: 'success'})
+                        this.search()
                         this.changeMap(1)
                     }else {
                         this.$message({message: '新增失败', type: 'fail'})
@@ -203,7 +248,6 @@ export default {
             }else{
                 console.log(saveUpdateParams)
                 this.$account.request("/api/UserAPI",saveUpdateParams,"PUT").then(resp => {
-                    console.log(resp.data.err)
                     if(resp.data.err == null){
                         this.$message({type: 'success', message: '修改成功!', customClass: 'zZindex'});
                         this.changeMap(1)
@@ -212,6 +256,16 @@ export default {
                     }
                 })
             }
+        },
+        handleSizeChange(val) {
+            this.queryForm.pageSize = val
+            this.search()
+            console.log(`每页 ${val} 条`);
+        },
+        handleCurrentChange(val) {
+            this.queryForm.currentPage = val
+            this.search()
+            console.log(`当前页: ${val}`);
         },
         changeMap (type) {
             if (this.showList === 2) {
@@ -268,8 +322,16 @@ export default {
             })
         },
 
-        detailRow(){
-
+        detailRow(row){
+            this.dialogVisible = true
+            var SelectByIdParams = {ID: row.id}
+            this.$account.request("/api/UserAPI",SelectByIdParams,"GET").then(resp => {
+                if(resp.data.err == null){
+                    this.ruleForm = resp.data.data
+                }
+            }).catch(function (error){
+                console.log(error)
+            })
         },
         phoneValid(e){
             let boolean = new RegExp("^[1-9]\\d*.\\d*|0\\.\\d*[1-9]\\d*|[0-9]$").test(e.target.value)
@@ -288,7 +350,7 @@ export default {
 <style scoped>
 
     .conditions{
-        margin: 40px;
+        margin: 25px;
     }
 
     .conditions .condition{
@@ -306,5 +368,10 @@ export default {
         height: 50px;
         float: right;
         font-size: 25px;
+    }
+
+    .pageSelect{
+        float: right;
+        margin-right: 30px;
     }
 </style>

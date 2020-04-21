@@ -85,8 +85,11 @@ func (c *UserAPI) Get() {
 	phone := c.GetString("Phone")
 	email := c.GetString("Email")
 	userType := c.GetString("UserType")
+	currentPage,_ := c.GetInt("CurrentPage")
+	pageSize,_ := c.GetInt("PageSize")
 
-	fmt.Println("----2----",id,username,phone,email,userType)
+
+	fmt.Println("----2----",id,username,phone,email,userType,currentPage,pageSize)
 
 	type User struct {
 		serializer.UserSerialize
@@ -123,8 +126,16 @@ func (c *UserAPI) Get() {
 		c.Error("权限不足")
 		return
 	}
-	db.GetDB().Joins("left join user_info on user.id = user_info.user_id").Where("user.id like ? and user.username like ? and user.phone like ? and user.email like ? and user.user_type like ?",newId,newUsername,newPhone,newEmail,newUserType).Find(&users)
-	c.Success(users)
+
+	if pageSize == 0 && currentPage == 0 {
+		db.GetDB().Joins("left join user_info on user.id = user_info.user_id").Where("user.id like ? and user.username like ? and user.phone like ? and user.email like ? and user.user_type like ?",newId,newUsername,newPhone,newEmail,newUserType).Find(&user)
+		c.Success(user)
+	}
+
+	if pageSize > 0 && currentPage > 0 {
+		db.GetDB().Joins("left join user_info on user.id = user_info.user_id").Where("user.id like ? and user.username like ? and user.phone like ? and user.email like ? and user.user_type like ?",newId,newUsername,newPhone,newEmail,newUserType).Limit(pageSize).Offset((currentPage-1)*pageSize).Order("user.id").Find(&users)
+		c.Success(users)
+	}
 }
 
 func (c *UserAPI) Post() {
