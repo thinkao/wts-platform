@@ -12,6 +12,7 @@ func InitRouter() {
 	beego.Router("api/LogoutAPI", &account.LogoutAPI{})
 	beego.Router("api/CSRFTokenAPI", &account.CSRFTokenAPI{})
 	beego.Router("api/UserAPI", &account.UserAPI{})
+	beego.Router("api/UserCountAPI", &account.UserCountAPI{})
 	beego.Router("api/DynamicAPI", &account.DynamicAPI{})
 	beego.Router("api/CommentsAPI", &account.CommentsAPI{})
 	beego.Router("api/ProblemAPI", &problem.ProblemAPI{})

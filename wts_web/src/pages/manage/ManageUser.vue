@@ -31,6 +31,7 @@
             </div>
             <div class="conditions">
                 <el-table
+                        height="520"
                         :data="tableData"
                         stripe
                         style="width: 100%">
@@ -204,6 +205,12 @@ export default {
     },
     methods: {
         search () {
+            this.$account.request("/api/UserCountAPI","","GET").then(resp => {
+                this.sizeTotal = resp.data.data
+            }).catch(function (error){
+                console.log(error)
+            })
+
             var selectConditionParams = {
                 ID: this.queryForm.param.ID,
                 Username: this.queryForm.param.Username,
@@ -214,10 +221,8 @@ export default {
                 PageSize: this.queryForm.pageSize,
                 //Offset: 0,
             }
-            console.log(JSON.stringify(selectConditionParams))
             this.$account.request("/api/UserAPI",selectConditionParams,"GET").then(resp => {
                 this.tableData = resp.data.data
-                this.sizeTotal = resp.data.data.total
             }).catch(function (error){
                 console.log(error)
             })
@@ -373,5 +378,9 @@ export default {
     .pageSelect{
         float: right;
         margin-right: 30px;
+    }
+
+    .manageUserTableHeight{
+        height: 100px;
     }
 </style>

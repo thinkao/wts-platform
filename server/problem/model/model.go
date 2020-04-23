@@ -4,7 +4,7 @@ import "time"
 
 /*题库表*/
 type Problem struct {
-	ID        int `gorm:"AUTO_INCREMENT"`
+	ID        int 		`gorm:"AUTO_INCREMENT"`
 	UserID    int
 	Content   string    `gorm:"type:varchar(500)"`
 	Option    string    `gorm:"type:varchar(500)"`
@@ -14,12 +14,12 @@ type Problem struct {
 	CreatedAt time.Time `gorm:"column:create_time"`
 	UpdatedAt time.Time `gorm:"column:update_time"`
 
-	Fights []*Fight `gorm:"many2many:problem_fight"`
+	Fights []*Fight 	`gorm:"many2many:problem_fight"`
 }
 
 /*答题对战表*/
 type Fight struct {
-	ID        int `gorm:"AUTO_INCREMENT"`
+	ID        int 		`gorm:"AUTO_INCREMENT"`
 	UserBlue  int
 	UserRed   int
 	ScoreBlue int       `gorm:"type:int"`

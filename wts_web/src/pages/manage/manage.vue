@@ -18,7 +18,6 @@
                     <el-submenu index="1">
                         <template slot="title">
                             <i class="el-icon-menu"></i>
-
                             <span>用户管理</span>
                         </template>
                         <el-menu-item-group>
@@ -32,10 +31,18 @@
                             </el-menu-item>
                         </el-menu-item-group>
                     </el-submenu>
-                    <el-menu-item index="2">
-                        <i class="el-icon-menu"></i>
-                        <span slot="title"><router-link to="/manage/problem" style="color: white;text-decoration-line: none">题库管理</router-link></span>
-                    </el-menu-item>
+                    <el-submenu index="2">
+                        <template slot="title">
+                            <i class="el-icon-menu"></i>
+                            <span>题库管理</span>
+                        </template>
+                        <el-menu-item-group>
+                            <el-menu-item index="2-1">
+                                <i class="el-icon-star-on"></i>
+                                <span slot="title"><router-link to="/manage/problem" style="color: white;text-decoration-line: none">题库管理</router-link></span>
+                            </el-menu-item>
+                        </el-menu-item-group>
+                    </el-submenu>
                 </el-menu>
             </el-col>
             <el-col :span="20">

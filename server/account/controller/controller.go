@@ -18,6 +18,9 @@ type LoginAPI struct{ request.Controller }
 type RegistAPI struct{ request.Controller }
 type LogoutAPI struct{ request.Controller }
 type UserAPI struct{ request.Controller }
+type UserCountAPI struct {
+	request.Controller
+}
 type DynamicAPI struct{ request.Controller }
 type CommentsAPI struct{ request.Controller }
 type CSRFTokenAPI struct{ request.Controller }
@@ -77,6 +80,17 @@ func (c *RegistAPI) Post() {
 
 	c.Success(nil)
 }
+
+func (c *UserCountAPI) Get() {
+	if c.RequestUser().UserType != constant.Admin {
+		c.Error("权限不足")
+		return
+	}
+	var count = 0
+	db.GetDB().Table("user").Count(&count)
+	c.Success(count)
+}
+
 
 func (c *UserAPI) Get() {
 	c.Check(nil, true, "all")
