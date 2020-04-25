@@ -203,6 +203,7 @@ export default {
                 this.isPush=false
               }else {
                 this.$message({message: '发表成功', type: 'success'})
+                this.search()
                 this.dynamic = "dynamicAll"
               }
             })

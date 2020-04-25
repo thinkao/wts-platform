@@ -1,6 +1,6 @@
 <template>
   <div class="body">
-    <el-card class="box-card">
+    <el-card class="box-card fightBody">
       <div>
         <el-tabs v-model="fightType" type="card" @tab-click="handleClick">
           <el-tab-pane label="随机匹配" name="random">
@@ -91,7 +91,7 @@
     margin: auto;
     margin-top: 30px;
     width: 60%;
-    height: 600px;
+    height: 728px;
   }
 
 </style>
