@@ -3,6 +3,12 @@ package serializer
 import "time"
 
 type ProblemSerialize struct {
+	ID        int    `json:"id"`
+	Content   string `json:"content"`
+	Type      string `json:"type"`
+	Difficult string `json:"difficult"`
+	Option    string `json:"option"`
+	Answer    string `json:"answer"`
 }
 
 type FightSerialize struct {

@@ -17,6 +17,7 @@
                     </el-form-item>
                     <el-form-item label="角色" class="condition">
                         <el-select v-model="queryForm.param.UserType">
+                            <el-option label="" value=""></el-option>
                             <el-option label="管理员" value="admin"></el-option>
                             <el-option label="普通用户" value="normal"></el-option>
                         </el-select>
@@ -254,6 +255,7 @@ export default {
                 console.log(saveUpdateParams)
                 this.$account.request("/api/UserAPI",saveUpdateParams,"PUT").then(resp => {
                     if(resp.data.err == null){
+                        this.search()
                         this.$message({type: 'success', message: '修改成功!', customClass: 'zZindex'});
                         this.changeMap(1)
                     }else {

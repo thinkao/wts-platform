@@ -25,10 +25,6 @@
                                 <i class="el-icon-location"></i>
                                 <span slot="title"><router-link to="/manage/user" style="color: white;text-decoration-line: none">基本信息</router-link></span>
                             </el-menu-item>
-                            <el-menu-item index="1-2">
-                                <i class="el-icon-document"></i>
-                                <span slot="title"><router-link to="/manage/user" style="color: white;text-decoration-line: none">权限管理</router-link></span>
-                            </el-menu-item>
                         </el-menu-item-group>
                     </el-submenu>
                     <el-submenu index="2">

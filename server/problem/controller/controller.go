@@ -7,9 +7,23 @@ import (
 	"server/problem/validation"
 	db "server/setting/model"
 	"server/setting/request"
+	"strconv"
 )
 
 type ProblemAPI struct{ request.Controller }
+type ProblemCountAPI struct {
+	request.Controller
+}
+
+func (c *ProblemCountAPI) Get() {
+	if c.RequestUser().UserType != constant.Admin {
+		c.Error("权限不足")
+		return
+	}
+	var count = 0
+	db.GetDB().Table("problem").Count(&count)
+	c.Success(count)
+}
 
 func (c *ProblemAPI) Post() {
 
@@ -77,17 +91,42 @@ func (c *ProblemAPI) Get() {
 	data := validation.ProblemGetValid{}
 	c.Check(&data, true, "all")
 
-	problemType := data.Type
-	difficult := data.Difficult
-	size := data.Size
+	id, _ := c.GetInt("ID")
+	content := c.GetString("Content")
+	problemType := c.GetString("Type")
+	difficult := c.GetString("Difficult")
+	currentPage, _ := c.GetInt("CurrentPage")
+	pageSize, _ := c.GetInt("PageSize")
+
+	var newIdStr = ""
+	if id == 0 {
+		newIdStr = ""
+	} else {
+		newIdStr = strconv.Itoa(id)
+	}
+	newId := "%" + newIdStr + "%"
+	newContent := "%" + content + "%"
+	newDifficult := "%" + difficult + "%"
+	newproblemType := "%" + problemType + "%"
+
+	//size := data.Size
 
 	type Problem struct {
 		serializer.ProblemSerialize
 	}
+	var problems []Problem
+	var problem = model.Problem{}
 
-	var problem []Problem
+	if pageSize == 0 && currentPage == 0 {
+		db.GetDB().Table("problem").Where("id like ? and content like ? and type like ? and difficult like ?", newId, newContent, newproblemType, newDifficult).Find(&problem)
+		c.Success(problem)
+	}
+
+	if pageSize > 0 && currentPage > 0 {
+		db.GetDB().Table("problem").Where("id like ? and content like ? and type like ? and difficult like ?", newId, newContent, newproblemType, newDifficult).Limit(pageSize).Offset((currentPage - 1) * pageSize).Order("problem.id").Find(&problems)
+		c.Success(problems)
+	}
+
 	//SELECT * FROM problem as t1 WHERE t1.id>=(RAND()*(SELECT MAX(id) FROM problem)) and id like '1%' LIMIT 3;
-	db.GetDB().Where("id >= ? and type = ? and difficult = ?", db.GetDB().Table("problem").Select("MAX(id)").SubQuery(), problemType, difficult).Limit(size).Find(&problem)
-
-	c.Success(&problem)
+	//db.GetDB().Where("id >= ? and type = ? and difficult = ?", db.GetDB().Table("problem").Select("MAX(id)").SubQuery(), problemType, difficult).Limit(size).Find(&problem)
 }

@@ -1,7 +1,6 @@
 package controller
 
 import (
-	"fmt"
 	uuid "github.com/satori/go.uuid"
 	"server/account/constant"
 	"server/account/model"
@@ -72,7 +71,7 @@ func (c *RegistAPI) Post() {
 	db.GetDB().Create(&user)
 
 	var user1 model.User
-	if (db.GetDB().Table("user").Select("id").Where("phone = ?", phone).Scan(&user1)).Error == nil{
+	if (db.GetDB().Table("user").Select("id").Where("phone = ?", phone).Scan(&user1)).Error == nil {
 		id := user1.ID
 		userInfo := model.UserInfo{UserID: id}
 		db.GetDB().Create(&userInfo)
@@ -91,7 +90,6 @@ func (c *UserCountAPI) Get() {
 	c.Success(count)
 }
 
-
 func (c *UserAPI) Get() {
 	c.Check(nil, true, "all")
 	id, _ := c.GetInt("ID")
@@ -99,18 +97,14 @@ func (c *UserAPI) Get() {
 	phone := c.GetString("Phone")
 	email := c.GetString("Email")
 	userType := c.GetString("UserType")
-	currentPage,_ := c.GetInt("CurrentPage")
-	pageSize,_ := c.GetInt("PageSize")
-
-
-	fmt.Println("----2----",id,username,phone,email,userType,currentPage,pageSize)
+	currentPage, _ := c.GetInt("CurrentPage")
+	pageSize, _ := c.GetInt("PageSize")
 
 	type User struct {
 		serializer.UserSerialize
 	}
 	var users []User
 	user := model.User{}
-
 
 	if id != 0 && (c.RequestUser().UserType == constant.Normal) {
 		if id == c.RequestUser().ID {
@@ -126,15 +120,14 @@ func (c *UserAPI) Get() {
 	var newIdStr = ""
 	if id == 0 {
 		newIdStr = ""
-	}else {
+	} else {
 		newIdStr = strconv.Itoa(id)
 	}
-	fmt.Println("----d-----",newIdStr)
-	newId := "%"+newIdStr+"%"
-	newUsername := "%"+username+"%"
-	newPhone := "%"+phone+"%"
-	newEmail := "%"+email+"%"
-	newUserType := "%"+userType+"%"
+	newId := "%" + newIdStr + "%"
+	newUsername := "%" + username + "%"
+	newPhone := "%" + phone + "%"
+	newEmail := "%" + email + "%"
+	newUserType := "%" + userType + "%"
 
 	if c.RequestUser().UserType != constant.Admin {
 		c.Error("权限不足")
@@ -142,23 +135,23 @@ func (c *UserAPI) Get() {
 	}
 
 	if pageSize == 0 && currentPage == 0 {
-		db.GetDB().Joins("left join user_info on user.id = user_info.user_id").Where("user.id like ? and user.username like ? and user.phone like ? and user.email like ? and user.user_type like ?",newId,newUsername,newPhone,newEmail,newUserType).Find(&user)
+		db.GetDB().Joins("left join user_info on user.id = user_info.user_id").Where("user.id like ? and user.username like ? and user.phone like ? and user.email like ? and user.user_type like ?", newId, newUsername, newPhone, newEmail, newUserType).Find(&user)
 		c.Success(user)
 	}
 
 	if pageSize > 0 && currentPage > 0 {
-		db.GetDB().Joins("left join user_info on user.id = user_info.user_id").Where("user.id like ? and user.username like ? and user.phone like ? and user.email like ? and user.user_type like ?",newId,newUsername,newPhone,newEmail,newUserType).Limit(pageSize).Offset((currentPage-1)*pageSize).Order("user.id").Find(&users)
+		db.GetDB().Joins("left join user_info on user.id = user_info.user_id").Where("user.id like ? and user.username like ? and user.phone like ? and user.email like ? and user.user_type like ?", newId, newUsername, newPhone, newEmail, newUserType).Limit(pageSize).Offset((currentPage - 1) * pageSize).Order("user.id").Find(&users)
 		c.Success(users)
 	}
 }
 
 func (c *UserAPI) Post() {
 	data := validation.AddUserValid{}
-	c.Check(&data,true,"admin")
+	c.Check(&data, true, "admin")
 	phone := data.Phone
 	username := data.Username
 	password := data.Password
-	userType :=data.UserType
+	userType := data.UserType
 	email := data.Email
 	declaration := data.Declaration
 	integral := data.Integral
@@ -170,14 +163,13 @@ func (c *UserAPI) Post() {
 		return
 	}
 
-	user := model.User{Phone: phone, Username:username,Password: utils.Encrypt(password), Email: email,UserType:userType}
+	user := model.User{Phone: phone, Username: username, Password: utils.Encrypt(password), Email: email, UserType: userType}
 	db.GetDB().Create(&user)
 
-
 	var user1 model.User
-	if (db.GetDB().Table("user").Select("id").Where("phone = ?", phone).Scan(&user1)).Error == nil{
+	if (db.GetDB().Table("user").Select("id").Where("phone = ?", phone).Scan(&user1)).Error == nil {
 		id := user1.ID
-		userInfo := model.UserInfo{UserID: id,Declaration: declaration, Integral:integral, Level:level, Avatar: avatar}
+		userInfo := model.UserInfo{UserID: id, Declaration: declaration, Integral: integral, Level: level, Avatar: avatar}
 		db.GetDB().Create(&userInfo)
 	}
 
@@ -197,13 +189,12 @@ func (c *UserAPI) Put() {
 	declaration := data.Declaration
 	avatar := data.Avatar
 
+	userData := map[string]interface{}{"Phone": phone, "Username": username, "Password": password, "Email": email}
 
-	userData := map[string]interface{}{"Phone":phone,"Username":username,"Password":password,"Email":email}
-
-	userInfoData := map[string]interface{}{"Declaration":declaration,"Avatar":avatar}
+	userInfoData := map[string]interface{}{"Declaration": declaration, "Avatar": avatar}
 
 	UserType := c.RequestUser().UserType
-	if UserType == constant.Admin{
+	if UserType == constant.Admin {
 
 		userData["UserType"] = data.UserType
 		userInfoData["Integral"] = data.Integral
@@ -213,7 +204,6 @@ func (c *UserAPI) Put() {
 
 	user := model.User{}
 	userInfo := model.UserInfo{}
-
 
 	if db.GetDB().Where("id = ?", id).First(&model.User{}).Error == nil {
 
@@ -253,24 +243,23 @@ func (c *DynamicAPI) Get() {
 
 	var results []model.Result
 	if id != 0 {
-		db.GetDB().Table("user").Select("user.username,user_info.avatar,dynamic.content,dynamic.img_path,dynamic.create_time").Joins("left join user_info on user.id = user_info.user_id").Joins("right join dynamic on dynamic.user_id = user.id").Where("user.id = ?",id).Order("dynamic.create_time desc").Scan(&results)
+		db.GetDB().Table("user").Select("user.username,user_info.avatar,dynamic.content,dynamic.img_path,dynamic.create_time").Joins("left join user_info on user.id = user_info.user_id").Joins("right join dynamic on dynamic.user_id = user.id").Where("user.id = ?", id).Order("dynamic.create_time desc").Scan(&results)
 
-	}else {
+	} else {
 		db.GetDB().Table("user").Select("user.username,user_info.avatar,dynamic.content,dynamic.img_path,dynamic.create_time").Joins("left join user_info on user.id = user_info.user_id").Joins("right join dynamic on dynamic.user_id = user.id").Order("dynamic.create_time desc").Scan(&results)
 	}
 
-	for i:=0;i< len(results);i++ {
+	for i := 0; i < len(results); i++ {
 		results[i].ImgPath = config.IMAGE_FILE_PATH + results[i].ImgPath + ".png"
 	}
 
 	c.Success(&results)
 }
 
-
 func (c *DynamicAPI) Post() {
 
 	data := validation.DynamicValid{}
-	c.Check(&data, true,"all")
+	c.Check(&data, true, "all")
 
 	userId := c.RequestUser().ID
 
@@ -285,24 +274,23 @@ func (c *DynamicAPI) Post() {
 		img_file_path = config.IMAGE_FILE_PATH + u2.String() + ".png"
 		c.SaveToFile("file", img_file_path)
 		img := model.Dynamic{
-			ImgPath:   u2.String(),
+			ImgPath: u2.String(),
 		}
 		c.Success(img)
 		return
 	}
-
 
 	if db.GetDB().Where("id = ?", userId).First(&model.User{}).Error != nil {
 		c.Error("系统没有该人员")
 		return
 	}
 
-	if content == "" && imgPath == ""{
+	if content == "" && imgPath == "" {
 		c.Success(nil)
 		return
 	}
 
-	dynamic := model.Dynamic{UserID: userId,Content:content,ImgPath:imgPath}
+	dynamic := model.Dynamic{UserID: userId, Content: content, ImgPath: imgPath}
 	db.GetDB().Create(&dynamic)
 	c.Success(nil)
 }

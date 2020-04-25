@@ -38,22 +38,21 @@
         <el-card>
           <el-tabs v-model="dynamic" type="card">
             <el-tab-pane label="当前动态" name="dynamicAll">
-              <div>
-                <el-table
-                  :data="tableData"
-                  style="width: 100%">
-                  <el-table-column
-                    prop="content"
-                    width="180">
-                  </el-table-column>
-                  <el-table-column
-                    prop="img_path"
-                    width="180">
-                  </el-table-column>
-                  <el-table-column
-                    prop="create_time">
-                  </el-table-column>
-                </el-table>
+              <div style="margin: 10px">
+                <ul>
+                  <li v-for="item in list" :key="item">
+                    <div>
+                      <!--<img :src="item.ImgPath" style="float: left">-->
+                      <el-avatar style="float: left"> user </el-avatar>
+                      <p style="line-height: 40px;margin-left: 50px">{{item.Username}}</p>
+                    </div>
+                    <div class="dynamicContent">
+                      <p>{{item.Content}}</p>
+                      <img :src="item.ImgPath" style="margin-top: 10px">
+                    </div>
+                    <p style="float: right">{{item.CreateAt}}</p>
+                  </li>
+                </ul>
               </div>
             </el-tab-pane>
             <!--action="/api/DynamicAPI"-->
@@ -125,6 +124,14 @@ export default {
   data () {
     return {
       isPush:true,
+      list: [
+        {
+          name:"apple"
+        },
+        {
+          name:"banana"
+        }
+      ],
       params2:{},
       fileList2:[],
       dialogVisible:false,
@@ -142,7 +149,7 @@ export default {
           img: 'https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&sec=1555932101740&di=9ee42bcea75b9a6b91f15b6da964ac37&imgtype=0&src=http%3A%2F%2Fpic1.win4000.com%2Fwallpaper%2F9%2F5879c03369db1.jpg'
         },
         {
-          img: 'http://img2.3lian.com/2014/f4/191/d/22. jpg'
+          img: 'https://th.bing.com/th/id/OIP.c70wvKqS4QjmOCEa7EzR6wHaEo?pid=Api&rs=1'
         },
         {
           img: 'https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&sec=1556526887&di=bfbad078380fffd1ec63abaf7d7dd163&imgtype=jpg&er=1&src=http%3A%2F%2Fpic1.win4000.com%2Fwallpaper%2Fd%2F573534849e26b.jpg'
@@ -153,8 +160,12 @@ export default {
   methods: {
     search () {
         this.$account.request("/api/DynamicAPI","","GET").then(resp => {
-        console.log(resp)
-        this.tableData = resp.data.data
+        //this.tableData = resp.data.data
+          const jsonObj = JSON.parse(JSON.stringify(resp.data.data));
+          for(let i = 0; i<jsonObj.length; i++){
+            jsonObj[i].index = jsonObj[i].id;
+          }
+          this.list = jsonObj;
       }).catch(function (error){
         console.log(error)
       })
@@ -266,5 +277,10 @@ export default {
   .content .news .small-box-card{
     width: 340px;
     height:110px;
+  }
+
+  .dynamicContent{
+    margin-top: 20px;
+    margin-left: 50px;
   }
 </style>

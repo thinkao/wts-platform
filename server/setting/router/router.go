@@ -16,4 +16,5 @@ func InitRouter() {
 	beego.Router("api/DynamicAPI", &account.DynamicAPI{})
 	beego.Router("api/CommentsAPI", &account.CommentsAPI{})
 	beego.Router("api/ProblemAPI", &problem.ProblemAPI{})
+	beego.Router("api/ProblemCountAPI", &problem.ProblemCountAPI{})
 }

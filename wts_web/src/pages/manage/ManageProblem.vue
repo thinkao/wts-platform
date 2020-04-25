@@ -9,17 +9,12 @@
                     <el-form-item label="题目名" class="condition">
                         <el-input v-model="queryForm.param.Content"></el-input>
                     </el-form-item>
-                    <el-form-item label="选项" class="condition">
-                        <el-input v-model="queryForm.param.Option"></el-input>
-                    </el-form-item>
-                    <el-form-item label="答案" class="condition">
-                        <el-input v-model="queryForm.param.Answer"></el-input>
-                    </el-form-item>
                     <el-form-item label="类型" class="condition">
                         <el-input v-model="queryForm.param.Type"></el-input>
                     </el-form-item>
                     <el-form-item label="困难程度" class="condition">
                         <el-select v-model="queryForm.param.Difficult">
+                            <el-option label="" value=""></el-option>
                             <el-option label="简单" value="difficultLevelOne"></el-option>
                             <el-option label="普通" value="difficultLevelTwo"></el-option>
                             <el-option label="困难" value="difficultLevelThree"></el-option>
@@ -101,14 +96,14 @@
                     <el-form-item label="题目ID" prop="id">
                         <el-input :disabled="true" v-model="ruleForm.ID"></el-input>
                     </el-form-item>
-                    <el-form-item label="题目名" prop="username">
+                    <el-form-item label="题目名" prop="context">
                         <el-input v-model="ruleForm.Content"></el-input>
                     </el-form-item>
                     <el-form-item label="选项" prop="option">
                         <el-input v-model="ruleForm.Option"></el-input>
                     </el-form-item>
                     <el-form-item label="答案" prop="answer">
-                        <el-input v-model="ruleForm.Answer" @blur="phoneValid($event)"></el-input>
+                        <el-input v-model="ruleForm.Answer"></el-input>
                     </el-form-item>
                     <el-form-item label="类型" prop="type">
                         <el-input v-model="ruleForm.Type"></el-input>
@@ -120,16 +115,6 @@
                             <el-option label="困难" value="difficultLevelThree"></el-option>
                         </el-select>
                     </el-form-item>
-                    <!--<el-form-item label="上传头像" prop="avatar">
-                        <el-upload
-                                class="upload-demo"
-                                v-model="ruleForm.Avatar"
-                                action="https://jsonplaceholder.typicode.com/posts/"
-                                multiple
-                                :file-list="fileList">
-                            <el-button size="small" type="primary">点击上传</el-button>
-                        </el-upload>
-                    </el-form-item>-->
                 </el-form>
             </div>
         </div>
@@ -181,8 +166,6 @@
                     param:{
                         ID:'',
                         Content:'',
-                        Option:'',
-                        Answer:'',
                         Type:'',
                         Difficult:''
                     },
@@ -193,7 +176,7 @@
         },
         methods: {
             search () {
-                this.$account.request("/api/UserCountAPI","","GET").then(resp => {
+                this.$account.request("/api/ProblemCountAPI","","GET").then(resp => {
                     this.sizeTotal = resp.data.data
                 }).catch(function (error){
                     console.log(error)
@@ -202,16 +185,17 @@
                 var selectConditionParams = {
                     ID: this.queryForm.param.ID,
                     Content: this.queryForm.param.Content,
-                    Option: this.queryForm.param.Option,
-                    Answer: this.queryForm.param.Answer,
                     Type: this.queryForm.param.Type,
                     Difficult: this.queryForm.param.Difficult,
                     CurrentPage: this.queryForm.currentPage,
                     PageSize: this.queryForm.pageSize,
                     //Offset: 0,
                 }
-                this.$account.request("/api/UserAPI",selectConditionParams,"GET").then(resp => {
+                console.log("---->"+selectConditionParams)
+                this.$account.request("/api/ProblemAPI",selectConditionParams,"GET").then(resp => {
                     this.tableData = resp.data.data
+                    console.log("---->"+resp.data)
+                    console.log("--------->"+resp.data.data)
                 }).catch(function (error){
                     console.log(error)
                 })
@@ -226,7 +210,7 @@
                     Difficult: this.ruleForm.Difficult,
                 }
                 if(!this.ruleForm.ID){
-                    this.$account.request("/api/UserAPI",saveUpdateParams,"POST").then(resp => {
+                    this.$account.request("/api/ProblemAPI",saveUpdateParams,"POST").then(resp => {
                         if(resp.data.err == null){
                             this.$message({message: '新增成功', type: 'success'})
                             this.search()
@@ -237,8 +221,9 @@
                     })
                 }else{
                     console.log(saveUpdateParams)
-                    this.$account.request("/api/UserAPI",saveUpdateParams,"PUT").then(resp => {
+                    this.$account.request("/api/ProblemAPI",saveUpdateParams,"PUT").then(resp => {
                         if(resp.data.err == null){
+                            this.search()
                             this.$message({type: 'success', message: '修改成功!', customClass: 'zZindex'});
                             this.changeMap(1)
                         }else {
@@ -286,7 +271,7 @@
                     type: 'warning'
                 }).then(() => {
                     var DeleteParams = {id: row.id}
-                    this.$account.request("/api/UserAPI",DeleteParams,"DELETE").then(resp => {
+                    this.$account.request("/api/ProblemAPI",DeleteParams,"DELETE").then(resp => {
                         if(resp.data.err == null){
                             this.search()
                             this.$message({type: 'success', message: '删除成功!'})
@@ -299,7 +284,7 @@
             updateRow(row) {
                 this.showList = 2
                 var SelectByIdParams = {ID: row.id}
-                this.$account.request("/api/UserAPI",SelectByIdParams,"GET").then(resp => {
+                this.$account.request("/api/ProblemAPI",SelectByIdParams,"GET").then(resp => {
                     this.resetForm()
                     if(resp.data.err == null){
                         this.ruleForm = resp.data.data
@@ -312,20 +297,13 @@
             detailRow(row){
                 this.dialogVisible = true
                 var SelectByIdParams = {ID: row.id}
-                this.$account.request("/api/UserAPI",SelectByIdParams,"GET").then(resp => {
+                this.$account.request("/api/ProblemAPI",SelectByIdParams,"GET").then(resp => {
                     if(resp.data.err == null){
                         this.ruleForm = resp.data.data
                     }
                 }).catch(function (error){
                     console.log(error)
                 })
-            },
-            phoneValid(e){
-                let boolean = new RegExp("^[1-9]\\d*.\\d*|0\\.\\d*[1-9]\\d*|[0-9]$").test(e.target.value)
-                if(!boolean){
-                    this.$message.warning('请输入数字')
-                    e.target.value=''
-                }
             },
         },
         mounted () {
