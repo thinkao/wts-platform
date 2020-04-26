@@ -12,14 +12,14 @@
           <router-link to="/practice/language"><el-button>编程语言</el-button></router-link>
         </div>
         <div class="box-three">
-          <router-link to="/practice/language"><el-button>不知道呢</el-button></router-link>
-        </div>
-        <div class="box-four">
           <router-link to="/practice/algorithm"><el-button>算法</el-button></router-link>
         </div>
-        <div class="box-five">
+        <div class="box-four">
           <router-link to="/practice/database"><el-button>数据库</el-button></router-link>
         </div>
+        <!--<div class="box-five">
+          <router-link to="/practice/database"><el-button>逻辑</el-button></router-link>
+        </div>-->
       </div>
     </div>
     <div class="content">
