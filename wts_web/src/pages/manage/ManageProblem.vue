@@ -106,7 +106,8 @@
                         <el-input v-model="ruleForm.Answer"></el-input>
                     </el-form-item>
                     <el-form-item label="类型" prop="type">
-                        <el-input v-model="ruleForm.Type"></el-input>
+                        <!--<el-input v-model="ruleForm.Type"></el-input>-->
+                        <el-cascader style="width: 400px" :options="options" v-model="ruleForm.Type" clearable></el-cascader>
                     </el-form-item>
                     <el-form-item label="困难程度" prop="difficult">
                         <el-select v-model="ruleForm.Difficult">
@@ -171,7 +172,125 @@
                     },
                     currentPage: 1,
                     pageSize: 8
-                }
+                },
+                options: [{
+                    value: '计算机基础',
+                    label: '计算机基础',
+                    children: [{
+                        value: '算法',
+                        label: '算法',
+                        children: [{
+                            value: '查找',
+                            label: '查找'
+                        }, {
+                            value: '排序',
+                            label: '排序'
+                        }, {
+                            value: '递归',
+                            label: '递归'
+                        }, {
+                            value: '复杂度',
+                            label: '复杂度'
+                        }]
+                    }, {
+                        value: '数据结构',
+                        label: '数据结构',
+                        children: [{
+                            value: '数组',
+                            label: '数组'
+                        }, {
+                            value: '字符串',
+                            label: '字符串'
+                        },{
+                            value: '链表',
+                            label: '链表'
+                        },{
+                            value: '栈',
+                            label: '栈'
+                        },{
+                            value: '队列',
+                            label: '队列'
+                        },{
+                            value: '树',
+                            label: '树'
+                        },{
+                            value: '哈希',
+                            label: '哈希'
+                        },{
+                            value: '堆',
+                            label: '堆'
+                        },{
+                            value: '图',
+                            label: '图'
+                        }]
+                    },{
+                        value: '计算机组成原理',
+                        label: '计算机组成原理',
+                        children: [{
+                            value: '编程基础',
+                            label: '编程基础'
+                        }, {
+                            value: '编译和原理',
+                            label: '编译和原理'
+                        }]
+                    }, {
+                        value: '操作系统',
+                        label: '操作系统',
+                        children: [{
+                            value: '操作系统',
+                            label: '操作系统'
+                        }, {
+                            value: 'Linux',
+                            label: 'Linux'
+                        }]
+                    }, {
+                        value: '计算机网络',
+                        label: '计算机网络',
+                        children: [{
+                            value: '计算机网络',
+                            label: '计算机网络'
+                        }]
+                    }]
+                    }, {
+                    value: '编程语言',
+                    label: '编程语言',
+                    children: [{
+                        value: '热门语言',
+                        label: '热门语言',
+                        children: [{
+                            value: 'Java',
+                            label: 'Java'
+                        }, {
+                            value: 'Go',
+                            label: 'Go'
+                        }, {
+                            value: 'Python',
+                            label: 'Python'
+                        }, {
+                            value: 'C',
+                            label: 'C'
+                        }, {
+                            value: 'Html',
+                            label: 'Html'
+                        }]
+                    }, {
+                        value: '非热门语言',
+                        label: '非热门语言',
+                        children: [{
+                            value: 'C#',
+                            label: 'C#'
+                        }, {
+                            value: 'PHP',
+                            label: 'PHP'
+                        }]
+                    }]
+                },{
+                    value: '算法',
+                    label: '算法',
+                },{
+                    value: 'SQL',
+                    label: 'SQL',
+                }]
             }
         },
         methods: {
@@ -191,11 +310,8 @@
                     PageSize: this.queryForm.pageSize,
                     //Offset: 0,
                 }
-                console.log("---->"+selectConditionParams)
                 this.$account.request("/api/ProblemAPI",selectConditionParams,"GET").then(resp => {
                     this.tableData = resp.data.data
-                    console.log("---->"+resp.data)
-                    console.log("--------->"+resp.data.data)
                 }).catch(function (error){
                     console.log(error)
                 })
