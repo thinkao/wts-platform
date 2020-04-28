@@ -317,14 +317,23 @@
                 })
             },
             saveUpdate(){
+                //let type = ""
+                /*for(let i=0;i<this.ruleForm.Type.length;i++){
+                    let msg = this.ruleForm.Type[i]
+                    if (msg !== '[' && msg !== ']' && msg !== '"'){
+                        type += msg
+                    }
+                }*/
                 var saveUpdateParams = {
                     ID: this.ruleForm.ID,
                     Content: this.ruleForm.Content,
                     Option:this.ruleForm.Option,
                     Answer: this.ruleForm.Answer,
-                    Type:this.ruleForm.Type,
+                    Type:JSON.stringify(this.ruleForm.Type),
                     Difficult: this.ruleForm.Difficult,
                 }
+                console.log("---->",saveUpdateParams.Type)
+
                 if(!this.ruleForm.ID){
                     this.$account.request("/api/ProblemAPI",saveUpdateParams,"POST").then(resp => {
                         if(resp.data.err == null){

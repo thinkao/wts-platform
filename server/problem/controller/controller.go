@@ -1,6 +1,7 @@
 package controller
 
 import (
+	"fmt"
 	"server/account/constant"
 	"server/problem/model"
 	"server/problem/serializer"
@@ -97,6 +98,10 @@ func (c *ProblemAPI) Get() {
 	difficult := c.GetString("Difficult")
 	currentPage, _ := c.GetInt("CurrentPage")
 	pageSize, _ := c.GetInt("PageSize")
+	size,_ := c.GetInt("Size")
+
+
+
 
 	var newIdStr = ""
 	if id == 0 {
@@ -109,15 +114,13 @@ func (c *ProblemAPI) Get() {
 	newDifficult := "%" + difficult + "%"
 	newproblemType := "%" + problemType + "%"
 
-	//size := data.Size
-
 	type Problem struct {
 		serializer.ProblemSerialize
 	}
 	var problems []Problem
 	var problem = model.Problem{}
 
-	if pageSize == 0 && currentPage == 0 {
+	if pageSize == 0 && currentPage == 0 && size == 0 {
 		db.GetDB().Table("problem").Where("id like ? and content like ? and type like ? and difficult like ?", newId, newContent, newproblemType, newDifficult).Find(&problem)
 		c.Success(problem)
 	}
@@ -127,6 +130,14 @@ func (c *ProblemAPI) Get() {
 		c.Success(problems)
 	}
 
-	//SELECT * FROM problem as t1 WHERE t1.id>=(RAND()*(SELECT MAX(id) FROM problem)) and id like '1%' LIMIT 3;
-	//db.GetDB().Where("id >= ? and type = ? and difficult = ?", db.GetDB().Table("problem").Select("MAX(id)").SubQuery(), problemType, difficult).Limit(size).Find(&problem)
+	if size > 30 {
+		size = 30
+	}
+
+	if size > 0 {
+		//SELECT * FROM problem as t1 WHERE t1.id>=(RAND()*(SELECT MAX(id) FROM problem)) and id like '1%' LIMIT 3;
+		//db.GetDB().Where("id >= ? and type like ? and difficult = ?", db.GetDB().Table("problem").Select("MAX(id)").SubQuery(), newproblemType, difficult).Limit(size).Find(&problem)
+		db.GetDB().Table("problem").Where("type like ? and difficult = ?",newproblemType,difficult).Limit(size).Find(&problems)
+		c.Success(problems)
+	}
 }

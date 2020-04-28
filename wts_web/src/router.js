@@ -28,6 +28,7 @@ import ProblemBasis from "./pages/problem/ProblemBasis";
 import ProblemAlgorithm from "./pages/problem/ProblemAlgorithm";
 import ProblemDatabase from "./pages/problem/ProblemDatabase";
 import ProblemLanguage from "./pages/problem/ProblemLanguage";
+import ProblemAnswer from "./pages/problem/ProblemAnswer";
 
 
 import Circle from "./pages/circle/Circle";
@@ -61,8 +62,9 @@ const router = new Router({
             {path: '/practice/basic', component: ProblemBasis, name: '计算机基础'},
             {path: '/practice/algorithm', component: ProblemAlgorithm, name: '算法'},
             {path: '/practice/database', component: ProblemDatabase, name: '数据库'},
-            {path: '/practice/language', component: ProblemLanguage, name: '编程语言'},
+            {path: '/practice/language', component: ProblemLanguage, name: '编程语言'}
           ]},
+        {path: '/answer', component: ProblemAnswer, name: '答题页面'},
         {path: '/interview', component: ProblemInterview, name: '面试刷题'},
         {path: '/circle', component: Circle, name: '圈子'},
         {path: '/manage',

@@ -69,10 +69,12 @@
     name: "ProblemBasis",
     methods:{
       handleCheckAlgorithmsAllChange(val) {
+        console.log("val:"+val)
         this.checkedAlgorithms = val ? algorithmsOptions : [];
         this.isIndeterminateAlgorithms = false;
       },
       handleCheckedAlgorithmsChange(value) {
+        console.log("value"+value)
         let checkedCount = value.length;
         this.checkAll = checkedCount === this.algorithms.length;
         this.isIndeterminateAlgorithms = checkedCount > 0 && checkedCount < this.algorithms.length;
@@ -122,16 +124,28 @@
         this.isIndeterminateNetWorks = checkedCount > 0 && checkedCount < this.networks.length;
       },
       selectOptions(){
-          const selectProblemConditionParams = {
-            /*ID: this.queryForm.param.ID,
-            Username: this.queryForm.param.Username,
-            Phone: this.queryForm.param.Phone,
-            Email: this.queryForm.param.Email,
-            UserType: this.queryForm.param.UserType,
-            //Offset: 0,*/
+        this.$router.push('/answer')
+        if (this.star == 0){
+          this.$message({message: '请选择难度等级', type: 'fail'})
+          return false
+        }
+        if (this.star < 3) {
+          this.Difficult = "difficultLevelOne"
+        }else if(this.star <= 4 && this.star >= 3){
+          this.queryForm.Difficult = "difficultLevelTwo"
+        }else {
+          this.queryForm.Difficult = "difficultLevelThree"
+        }
+        const selectProblemConditionParams = {
+          Type: this.Type,
+          Difficult: this.queryForm.Difficult,
+          Size: 3,
         };
         this.$account.request("/api/ProblemAPI",selectProblemConditionParams,"GET").then(resp => {
-          this.sizeTotal = resp.data.data
+          console.log("->"+resp)
+          console.log(resp.data)
+          console.log(resp.data.data)
+          this.Answer = resp.data.data
         }).catch(function (error){
           console.log(error)
         })
@@ -139,6 +153,12 @@
     },
     data() {
         return {
+          queryForm:{
+            Type: "",
+            Difficult: ""
+          },
+          Size: 0,
+          Answer:[],
           checkAll: false,
           checkAllAlgorithms: false,
           checkAllStructures: false,
