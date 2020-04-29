@@ -1,7 +1,6 @@
 package controller
 
 import (
-	"fmt"
 	"server/account/constant"
 	"server/problem/model"
 	"server/problem/serializer"
