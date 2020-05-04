@@ -92,10 +92,10 @@ func (c *ProblemAPI) Get() {
 
 	data := validation.ProblemGetValid{}
 	c.Check(&data, true, "all")
-
+	var problemType []string
 	id, _ := c.GetInt("ID")
 	content := c.GetString("Content")
-	problemType := c.GetString("Type")
+	problemType = c.GetStrings("Type")
 	difficult := c.GetString("Difficult")
 	currentPage, _ := c.GetInt("CurrentPage")
 	pageSize, _ := c.GetInt("PageSize")
@@ -110,7 +110,7 @@ func (c *ProblemAPI) Get() {
 	newId := "%" + newIdStr + "%"
 	newContent := "%" + content + "%"
 	newDifficult := "%" + difficult + "%"
-	newproblemType := "%" + problemType + "%"
+	newproblemType := "%" + problemType[0] + "%"
 
 	type Problem struct {
 		serializer.ProblemSerialize
@@ -128,6 +128,7 @@ func (c *ProblemAPI) Get() {
 		c.Success(problems)
 	}
 
+
 	if size > 30 {
 		size = 30
 	}
@@ -135,7 +136,16 @@ func (c *ProblemAPI) Get() {
 	if size > 0 {
 		//SELECT * FROM problem as t1 WHERE t1.id>=(RAND()*(SELECT MAX(id) FROM problem)) and id like '1%' LIMIT 3;
 		//db.GetDB().Where("id >= ? and type like ? and difficult = ?", db.GetDB().Table("problem").Select("MAX(id)").SubQuery(), newproblemType, difficult).Limit(size).Find(&problem)
-		db.GetDB().Table("problem").Where("type like ? and difficult = ?",newproblemType,difficult).Limit(size).Find(&problems)
+		var sql = ""
+		for i := 0;i< len(problemType);i++ {
+			if i != 0{
+				sql += " or type like \"%"+problemType[i]+"%\""
+			}else{
+				sql += "type like \"%"+problemType[i]+"%\""
+			}
+		}
+		db.GetDB().Table("problem").Where(sql).Limit(size).Find(&problems)
+		//db.GetDB().Table("problem").Where("type like ? and difficult = ?",newproblemType,difficult).Limit(size).Find(&problems)
 		c.Success(problems)
 	}
 }

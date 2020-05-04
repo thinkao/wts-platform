@@ -73,8 +73,8 @@
         this.checkedAlgorithms = val ? algorithmsOptions : [];
         this.isIndeterminateAlgorithms = false;
       },
-      handleCheckedAlgorithmsChange(value) {
-        console.log("value"+value)
+      handleCheckedAlgorithmsChange(value){
+        this.AnswerAlgorithms = value
         let checkedCount = value.length;
         this.checkAll = checkedCount === this.algorithms.length;
         this.isIndeterminateAlgorithms = checkedCount > 0 && checkedCount < this.algorithms.length;
@@ -85,7 +85,7 @@
         this.isIndeterminateStructures = false;
       },
       handleCheckedStructuresChange(value) {
-        console.log("value"+value)
+        this.AnswerStructures = value
         let checkedCount = value.length;
         this.checkAll = checkedCount === this.structures.length;
         this.isIndeterminateStructures = checkedCount > 0 && checkedCount < this.structures.length;
@@ -96,7 +96,7 @@
         this.isIndeterminateComponents = false;
       },
       handleCheckedComponentsChange(value) {
-        console.log("value"+value)
+        this.AnswerComponents = value
         let checkedCount = value.length;
         this.checkAll = checkedCount === this.components.length;
         this.isIndeterminateComponents = checkedCount > 0 && checkedCount < this.components.length;
@@ -107,7 +107,7 @@
         this.isIndeterminateOperations = false;
       },
       handleCheckedOperationsChange(value) {
-        console.log("value"+value)
+        this.AnswerOperations = value
         let checkedCount = value.length;
         this.checkAll = checkedCount === this.operations.length;
         this.isIndeterminateOperations = checkedCount > 0 && checkedCount < this.operations.length;
@@ -118,7 +118,7 @@
         this.isIndeterminateNetWorks = false;
       },
       handleCheckedNetWorksChange(value) {
-        console.log("value"+value)
+        this.AnswerNetWorks = value
         let checkedCount = value.length;
         this.checkAll = checkedCount === this.networks.length;
         this.isIndeterminateNetWorks = checkedCount > 0 && checkedCount < this.networks.length;
@@ -130,22 +130,20 @@
           return false
         }
         if (this.star < 3) {
-          this.Difficult = "difficultLevelOne"
+          this.queryForm.Difficult = "difficultLevelOne"
         }else if(this.star <= 4 && this.star >= 3){
           this.queryForm.Difficult = "difficultLevelTwo"
         }else {
           this.queryForm.Difficult = "difficultLevelThree"
         }
         const selectProblemConditionParams = {
-          Type: this.Type,
+          Type : this.AnswerStructures.concat(this.AnswerNetWorks).concat(this.AnswerOperations).concat(this.checkedAlgorithms).concat(this.AnswerComponents),
           Difficult: this.queryForm.Difficult,
-          Size: 3,
+          Size: 10,
         };
+        console.log("selectProblemConditionParams"+JSON.stringify(selectProblemConditionParams))
         this.$account.request("/api/ProblemAPI",selectProblemConditionParams,"GET").then(resp => {
-          console.log("->"+resp)
-          console.log(resp.data)
-          console.log(resp.data.data)
-          this.Answer = resp.data.data
+          console.log("resp----->"+resp.data.data)
         }).catch(function (error){
           console.log(error)
         })
@@ -154,11 +152,15 @@
     data() {
         return {
           queryForm:{
-            Type: "",
+            Type: [],
             Difficult: ""
           },
           Size: 0,
-          Answer:[],
+          AnswerAlgorithms:[],
+          AnswerComponents:[],
+          AnswerOperations:[],
+          AnswerNetWorks:[],
+          AnswerStructures:[],
           checkAll: false,
           checkAllAlgorithms: false,
           checkAllStructures: false,
