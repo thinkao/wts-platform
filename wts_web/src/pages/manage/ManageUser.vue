@@ -220,7 +220,6 @@ export default {
                 UserType: this.queryForm.param.UserType,
                 CurrentPage: this.queryForm.currentPage,
                 PageSize: this.queryForm.pageSize,
-                //Offset: 0,
             }
             this.$account.request("/api/UserAPI",selectConditionParams,"GET").then(resp => {
                 this.tableData = resp.data.data

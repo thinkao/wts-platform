@@ -13,6 +13,7 @@ type User struct {
 	UserType  string    `gorm:"default:'normal'"`
 	Email     string    `gorm:"type:varchar(30)"`
 	Phone     string    `gorm:"type:varchar(11);index:phone"`
+	Match 	  int		`gorm:"type:int;default:0"`
 	CreatedAt time.Time `gorm:"column:create_time"`
 	UpdatedAt time.Time `gorm:"column:update_time"`
 

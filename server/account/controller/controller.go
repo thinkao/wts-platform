@@ -22,6 +22,9 @@ type UserCountAPI struct {
 }
 type DynamicAPI struct{ request.Controller }
 type CommentsAPI struct{ request.Controller }
+type HistotyAPI struct {
+	request.Controller
+}
 type CSRFTokenAPI struct{ request.Controller }
 
 func (c *LoginAPI) Post() {
@@ -183,13 +186,13 @@ func (c *UserAPI) Put() {
 	id := data.Id
 	phone := data.Phone
 	username := data.Username
-
+	match := data.Match
 	email := data.Email
 	password := data.Password
 	declaration := data.Declaration
 	avatar := data.Avatar
 
-	userData := map[string]interface{}{"Phone": phone, "Username": username, "Password": password, "Email": email}
+	userData := map[string]interface{}{"Phone": phone, "Username": username, "Password": password, "Email": email, "Match":match}
 
 	userInfoData := map[string]interface{}{"Declaration": declaration, "Avatar": avatar}
 

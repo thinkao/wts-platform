@@ -16,7 +16,7 @@ func CreateTable(tables ...interface{}) {
 }
 
 func (App) SetUp() {
-	CreateTable(&model.Problem{}, &model.Fight{})
+	CreateTable(&model.Problem{}, &model.Fight{}, &model.History{})
 }
 
 func (App) name() string {

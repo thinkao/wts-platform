@@ -33,6 +33,7 @@ type UpdateUserValid struct {
 	Username    string
 	Password    string
 	UserType    string
+	Match       string
 	Declaration string
 	Email       string
 	Integral	int

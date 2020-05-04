@@ -9,6 +9,7 @@ type UserSerialize struct {
 	ID       int    `json:"id"`
 	Username string `json:"username"`
 	UserType string `json:"userType"`
+	Match    string	`json:"match"`
 	UserInfo model.UserInfo `gorm:"ForeignKey:UserID"`
 
 	Email string `json:"email"`

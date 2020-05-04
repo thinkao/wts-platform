@@ -14,7 +14,9 @@ type ProblemAPI struct{ request.Controller }
 type ProblemCountAPI struct {
 	request.Controller
 }
-
+type HistoryAPI struct {
+	request.Controller
+}
 func (c *ProblemCountAPI) Get() {
 	if c.RequestUser().UserType != constant.Admin {
 		c.Error("权限不足")
@@ -99,9 +101,6 @@ func (c *ProblemAPI) Get() {
 	pageSize, _ := c.GetInt("PageSize")
 	size,_ := c.GetInt("Size")
 
-
-
-
 	var newIdStr = ""
 	if id == 0 {
 		newIdStr = ""
@@ -139,4 +138,8 @@ func (c *ProblemAPI) Get() {
 		db.GetDB().Table("problem").Where("type like ? and difficult = ?",newproblemType,difficult).Limit(size).Find(&problems)
 		c.Success(problems)
 	}
+}
+
+func (c *HistoryAPI) Get() {
+
 }

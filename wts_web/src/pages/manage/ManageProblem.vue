@@ -174,121 +174,121 @@
                     pageSize: 8
                 },
                 options: [{
-                    value: '计算机基础',
+                    value: '1计算机基础',
                     label: '计算机基础',
                     children: [{
-                        value: '算法',
+                        value: '2算法',
                         label: '算法',
                         children: [{
-                            value: '查找',
+                            value: '3查找',
                             label: '查找'
                         }, {
-                            value: '排序',
+                            value: '3排序',
                             label: '排序'
                         }, {
-                            value: '递归',
+                            value: '3递归',
                             label: '递归'
                         }, {
-                            value: '复杂度',
+                            value: '3复杂度',
                             label: '复杂度'
                         }]
                     }, {
-                        value: '数据结构',
+                        value: '2数据结构',
                         label: '数据结构',
                         children: [{
-                            value: '数组',
+                            value: '3数组',
                             label: '数组'
                         }, {
-                            value: '字符串',
+                            value: '3字符串',
                             label: '字符串'
                         },{
-                            value: '链表',
+                            value: '3链表',
                             label: '链表'
                         },{
-                            value: '栈',
+                            value: '3栈',
                             label: '栈'
                         },{
-                            value: '队列',
+                            value: '3队列',
                             label: '队列'
                         },{
-                            value: '树',
+                            value: '3树',
                             label: '树'
                         },{
-                            value: '哈希',
+                            value: '3哈希',
                             label: '哈希'
                         },{
-                            value: '堆',
+                            value: '3堆',
                             label: '堆'
                         },{
-                            value: '图',
+                            value: '3图',
                             label: '图'
                         }]
                     },{
-                        value: '计算机组成原理',
+                        value: '2计算机组成原理',
                         label: '计算机组成原理',
                         children: [{
-                            value: '编程基础',
+                            value: '3编程基础',
                             label: '编程基础'
                         }, {
-                            value: '编译和原理',
+                            value: '3编译和原理',
                             label: '编译和原理'
                         }]
                     }, {
-                        value: '操作系统',
+                        value: '2操作系统',
                         label: '操作系统',
                         children: [{
-                            value: '操作系统',
+                            value: '3操作系统',
                             label: '操作系统'
                         }, {
-                            value: 'Linux',
+                            value: '3Linux',
                             label: 'Linux'
                         }]
                     }, {
-                        value: '计算机网络',
+                        value: '2计算机网络',
                         label: '计算机网络',
                         children: [{
-                            value: '计算机网络',
+                            value: '3计算机网络',
                             label: '计算机网络'
                         }]
                     }]
                     }, {
-                    value: '编程语言',
+                    value: '1编程语言',
                     label: '编程语言',
                     children: [{
-                        value: '热门语言',
+                        value: '2热门语言',
                         label: '热门语言',
                         children: [{
-                            value: 'Java',
+                            value: '3Java',
                             label: 'Java'
                         }, {
-                            value: 'Go',
+                            value: '3Go',
                             label: 'Go'
                         }, {
-                            value: 'Python',
+                            value: '3Python',
                             label: 'Python'
                         }, {
-                            value: 'C',
+                            value: '3C',
                             label: 'C'
                         }, {
-                            value: 'Html',
+                            value: '3Html',
                             label: 'Html'
                         }]
                     }, {
-                        value: '非热门语言',
+                        value: '2非热门语言',
                         label: '非热门语言',
                         children: [{
-                            value: 'C#',
+                            value: '3C#',
                             label: 'C#'
                         }, {
-                            value: 'PHP',
+                            value: '3PHP',
                             label: 'PHP'
                         }]
                     }]
                 },{
-                    value: '算法',
+                    value: '1算法',
                     label: '算法',
                 },{
-                    value: 'SQL',
+                    value: '1SQL',
                     label: 'SQL',
                 }]
             }
@@ -413,6 +413,7 @@
                     this.resetForm()
                     if(resp.data.err == null){
                         this.ruleForm = resp.data.data
+                        this.ruleForm.Type = JSON.parse(resp.data.data.Type)
                     }
                 }).catch(function (error){
                     console.log(error)

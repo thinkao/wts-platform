@@ -28,3 +28,11 @@ type Fight struct {
 	CreatedAt time.Time `gorm:"column:create_time"`
 	UpdatedAt time.Time `gorm:"column:update_time"`
 }
+
+/*答题历史记录表*/
+type History struct {
+	UserID		int
+	ProblemID	int
+	MyAnswer	string
+	CreatedAt	time.Time	`gorm:"column:create_time"`
+}
