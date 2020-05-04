@@ -11,12 +11,12 @@ import (
 )
 
 type ProblemAPI struct{ request.Controller }
-type ProblemCountAPI struct {
+type ProblemCountAPI struct {request.Controller}
+type HistoryAPI struct {request.Controller}
+type FightAPI struct {
 	request.Controller
 }
-type HistoryAPI struct {
-	request.Controller
-}
+
 func (c *ProblemCountAPI) Get() {
 	if c.RequestUser().UserType != constant.Admin {
 		c.Error("权限不足")
@@ -99,7 +99,6 @@ func (c *ProblemAPI) Get() {
 	difficult := c.GetString("Difficult")
 	currentPage, _ := c.GetInt("CurrentPage")
 	pageSize, _ := c.GetInt("PageSize")
-	size,_ := c.GetInt("Size")
 
 	var newIdStr = ""
 	if id == 0 {
@@ -118,7 +117,7 @@ func (c *ProblemAPI) Get() {
 	var problems []Problem
 	var problem = model.Problem{}
 
-	if pageSize == 0 && currentPage == 0 && size == 0 {
+	if pageSize == 0 && currentPage == 0 {
 		db.GetDB().Table("problem").Where("id like ? and content like ? and type like ? and difficult like ?", newId, newContent, newproblemType, newDifficult).Find(&problem)
 		c.Success(problem)
 	}
@@ -128,6 +127,28 @@ func (c *ProblemAPI) Get() {
 		c.Success(problems)
 	}
 
+}
+
+func (c *FightAPI) Get() {
+	data := validation.ProblemGetValid{}
+	c.Check(&data, true, "all")
+	id, _ := c.GetInt("ID")
+	var problemType []string
+	problemType = c.GetStrings("Type")
+	difficult := c.GetString("Difficult")
+
+	type Problem struct {
+		serializer.ProblemSerialize
+	}
+	var problem = model.Problem{}
+
+	var problems []Problem
+	size,_ := c.GetInt("Size")
+
+	if size == 0 && id != 0 {
+		db.GetDB().Table("problem").Where("id = ?",id).Find(&problem)
+		c.Success(problem)
+	}
 
 	if size > 30 {
 		size = 30
@@ -135,7 +156,6 @@ func (c *ProblemAPI) Get() {
 
 	if size > 0 {
 		//SELECT * FROM problem as t1 WHERE t1.id>=(RAND()*(SELECT MAX(id) FROM problem)) and id like '1%' LIMIT 3;
-		//db.GetDB().Where("id >= ? and type like ? and difficult = ?", db.GetDB().Table("problem").Select("MAX(id)").SubQuery(), newproblemType, difficult).Limit(size).Find(&problem)
 		var sql = ""
 		for i := 0;i< len(problemType);i++ {
 			if i != 0{
@@ -144,10 +164,11 @@ func (c *ProblemAPI) Get() {
 				sql += "type like \"%"+problemType[i]+"%\""
 			}
 		}
-		db.GetDB().Table("problem").Where(sql).Limit(size).Find(&problems)
-		//db.GetDB().Table("problem").Where("type like ? and difficult = ?",newproblemType,difficult).Limit(size).Find(&problems)
+		sql += " and difficult = \""+difficult+"\""
+		db.GetDB().Table("problem").Select("id").Where(sql).Limit(size).Find(&problems)
 		c.Success(problems)
 	}
+
 }
 
 func (c *HistoryAPI) Get() {

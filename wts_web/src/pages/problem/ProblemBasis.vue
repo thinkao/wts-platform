@@ -124,7 +124,6 @@
         this.isIndeterminateNetWorks = checkedCount > 0 && checkedCount < this.networks.length;
       },
       selectOptions(){
-        this.$router.push('/answer')
         if (this.star == 0){
           this.$message({message: '请选择难度等级', type: 'fail'})
           return false
@@ -141,9 +140,20 @@
           Difficult: this.queryForm.Difficult,
           Size: 10,
         };
-        console.log("selectProblemConditionParams"+JSON.stringify(selectProblemConditionParams))
-        this.$account.request("/api/ProblemAPI",selectProblemConditionParams,"GET").then(resp => {
-          console.log("resp----->"+resp.data.data)
+        this.$account.request("/api/FightAPI",selectProblemConditionParams,"GET").then(resp => {
+          if(resp.data.err == null){
+            const jsonObj = JSON.parse(JSON.stringify(resp.data.data));
+            for(let i = 0; i<jsonObj.length; i++){
+              jsonObj[i].index = jsonObj[i].id;
+            }
+            this.problemIds = jsonObj;
+            this.$router.push({
+              path:"/answer",
+              query:{
+                ProblemIds: this.problemIds,
+              }
+            })
+          }
         }).catch(function (error){
           console.log(error)
         })
@@ -156,6 +166,7 @@
             Difficult: ""
           },
           Size: 0,
+          problemIds:[],
           AnswerAlgorithms:[],
           AnswerComponents:[],
           AnswerOperations:[],

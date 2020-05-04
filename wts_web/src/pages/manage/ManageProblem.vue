@@ -332,7 +332,6 @@
                     Type:JSON.stringify(this.ruleForm.Type),
                     Difficult: this.ruleForm.Difficult,
                 }
-                console.log("---->",saveUpdateParams.Type)
 
                 if(!this.ruleForm.ID){
                     this.$account.request("/api/ProblemAPI",saveUpdateParams,"POST").then(resp => {

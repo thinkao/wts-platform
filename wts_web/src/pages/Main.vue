@@ -160,7 +160,6 @@ export default {
   methods: {
     search () {
         this.$account.request("/api/DynamicAPI","","GET").then(resp => {
-        //this.tableData = resp.data.data
           const jsonObj = JSON.parse(JSON.stringify(resp.data.data));
           for(let i = 0; i<jsonObj.length; i++){
             jsonObj[i].index = jsonObj[i].id;
