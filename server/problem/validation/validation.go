@@ -23,6 +23,18 @@ type ProblemGetValid struct {
 	Size      int
 }
 
+type FightGetValid struct {
+	Type      string
+	Difficult string
+	Size      int
+}
+
+type FightPostValid struct {
+	Id		int		`validation:"required"`
+	Answer	string
+
+}
+
 type DeleteByIdValid struct {
 	Id int `validate:"required"`
 }

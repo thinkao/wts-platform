@@ -242,8 +242,6 @@ func (c *DynamicAPI) Get() {
 		serializer.DynamicSerialize
 	}
 
-	/*select avatar,username,content,img_path,d.create_time from user as u,user_info as i,dynamic as d where u.id = i.user_id and u.id = d.user_id order by d.create_time desc;*/
-
 	var results []model.Result
 	if id != 0 {
 		db.GetDB().Table("user").Select("user.username,user_info.avatar,dynamic.content,dynamic.img_path,dynamic.create_time").Joins("left join user_info on user.id = user_info.user_id").Joins("right join dynamic on dynamic.user_id = user.id").Where("user.id = ?", id).Order("dynamic.create_time desc").Scan(&results)

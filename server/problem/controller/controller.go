@@ -92,10 +92,9 @@ func (c *ProblemAPI) Get() {
 
 	data := validation.ProblemGetValid{}
 	c.Check(&data, true, "all")
-	var problemType []string
 	id, _ := c.GetInt("ID")
 	content := c.GetString("Content")
-	problemType = c.GetStrings("Type")
+	problemType := c.GetString("Type")
 	difficult := c.GetString("Difficult")
 	currentPage, _ := c.GetInt("CurrentPage")
 	pageSize, _ := c.GetInt("PageSize")
@@ -109,7 +108,7 @@ func (c *ProblemAPI) Get() {
 	newId := "%" + newIdStr + "%"
 	newContent := "%" + content + "%"
 	newDifficult := "%" + difficult + "%"
-	newproblemType := "%" + problemType[0] + "%"
+	newproblemType := "%" + problemType + "%"
 
 	type Problem struct {
 		serializer.ProblemSerialize
@@ -130,7 +129,7 @@ func (c *ProblemAPI) Get() {
 }
 
 func (c *FightAPI) Get() {
-	data := validation.ProblemGetValid{}
+	data := validation.FightGetValid{}
 	c.Check(&data, true, "all")
 	id, _ := c.GetInt("ID")
 	var problemType []string
@@ -168,6 +167,25 @@ func (c *FightAPI) Get() {
 		db.GetDB().Table("problem").Select("id").Where(sql).Limit(size).Find(&problems)
 		c.Success(problems)
 	}
+
+}
+
+func (c *FightAPI) Post() {
+	data := validation.FightPostValid{}
+	c.Check(&data, true, "all")
+
+	id := data.Id
+	answer := data.Answer
+
+	var problem = model.Problem{}
+
+	db.GetDB().Table("problem").Select("answer").Where("id = ?",id).Scan(&problem)
+
+	if problem.Answer != answer {
+		c.Success(false)
+	}
+
+	c.Success(true)
 
 }
 
