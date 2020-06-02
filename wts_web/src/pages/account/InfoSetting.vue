@@ -8,7 +8,7 @@
         <el-form-item label="原手机号">
           <el-input v-model="ruleForm.account.phone"></el-input>
         </el-form-item>
-        <el-form-item label="活动区域">
+        <el-form-item label="新手机号">
           <el-input v-model="ruleForm.account.newPhone"></el-input>
         </el-form-item>
         <el-form-item label="验证码">

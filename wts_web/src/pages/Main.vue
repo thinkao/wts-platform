@@ -10,29 +10,27 @@
       </div>
       <div class="news">
         <div class="news-first">
-          <el-card class="small-box-card">
-            <div>
-              <i class="el-icon-money"></i>
-              <span>这是一个新消息</span>
-            </div>
-          </el-card>
+            <img src="../../static/img/propa1.jpg" style="width: 100%;height: 120px">
+            <p>wocacacacacac</p>
         </div>
         <div class="news-second">
-          <el-card class="small-box-card">
             <div>
-              <i class="el-icon-money"></i>
-              <span>这是一个新消息</span>
+              <img src="../../static/img/propa2.jpg" style="width: 100%;height: 120px">
+              <p>wocacacacacac</p>
             </div>
-          </el-card>
         </div>
         <div class="news-third">
-          <el-card class="small-box-card">
             <div>
-              <i class="el-icon-money"></i>
-              <span>这是一个新消息</span>
+              <img src="../../static/img/propa5.jpeg" style="width: 100%;height: 120px">
+              <p>wocacacacacac</p>
             </div>
-          </el-card>
         </div>
+        <div class="news-third">
+            <div>
+              <img src="../../static/img/propa4.jpg" style="width: 100%;height: 120px">
+              <p>wocacacacacac</p>
+            </div>
+          </div>
       </div>
       <div class="dynamic">
         <el-card>
@@ -108,8 +106,8 @@
       </el-card>
       <el-card class="box-card3">
         <div>
-          <i class="el-icon-money"></i>
-          <span>这是三个新消息</span>
+          <i class="el-icon-s-data"></i>
+          <span>今日推荐</span>
         </div>
       </el-card>
     </div>
@@ -272,10 +270,14 @@ export default {
 
   .content .news .news-first,.content .news .news-second,.content .news .news-third{
     flex-grow: 1;
+    position: relative;
+    margin-left: 3px;
   }
 
+  
+
   .content .news .small-box-card{
-    width: 340px;
+    width: 330px;
     height:110px;
   }
 
